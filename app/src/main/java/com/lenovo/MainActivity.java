@@ -4,14 +4,28 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        /**
+         * 这个地方设置了,该布局中只要是Button的控件,将全部注册点击事件,
+         *
+         */
+        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.myLayout);
+        for (int i = 0; i < relativeLayout.getChildCount(); i++) {
+            View view = relativeLayout.getChildAt(i);
+            if (view instanceof Button) {
+                view.setOnClickListener(this);
+            }
+        }
     }
 
     @Override
@@ -34,5 +48,10 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }
