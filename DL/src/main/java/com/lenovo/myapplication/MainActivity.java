@@ -6,7 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 /**
- * 这个是我创建的第一个android项目
+ * 这个是我创建的第一个android项目,
  */
 public class MainActivity extends ActionBarActivity {
 
