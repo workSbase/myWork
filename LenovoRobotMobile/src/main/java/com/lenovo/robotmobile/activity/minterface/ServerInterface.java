@@ -1,5 +1,7 @@
 package com.lenovo.robotmobile.activity.minterface;
 
+import android.content.Context;
+
 /**
  * Created by Administrator on 2015/11/20.
  * 这个接口做出来主要的目的是为了,提供给其他人的,用来连接服务器
@@ -27,4 +29,9 @@ public interface ServerInterface {
      * @return
      */
     public boolean isConnectServer();
+
+    /**
+     * 初始化上下文环境
+     */
+    public void setContext(Context context);
 }
