@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+/**
+ * ÊÖ»ú¶Ë³ÌÐò
+ */
 
 public class LoginActivity extends Activity {
 
