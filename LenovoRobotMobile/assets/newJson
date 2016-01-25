@@ -1,0 +1,59 @@
+﻿{
+    "birthday": "1991-5-8",
+    "description": "今天天气不错",
+    "name": "小红",
+    "pictureUrl": "http://",
+    "robotFriendList": [
+        {
+            "anotherName": "小红家的机器人",
+            "pictureUrl": "http://",
+            "robotDescription": "该机器人的出生年月是多少",
+            "robotName": "RobotA",
+            "robotYouYueId": 100
+        },
+        {
+            "anotherName": "小红家的机器人",
+            "pictureUrl": "http://",
+            "robotDescription": "该机器人的出生年月是多少",
+            "robotName": "RobotB",
+            "robotYouYueId": 200
+        }
+    ],
+    "robotPermissionList": [
+        {
+            "name": "RobotA",
+            "permissionList": [
+                {
+                    "key": "canControl",
+                    "value": false
+                },
+                {
+                    "key": "canVideo",
+                    "value": true
+                },
+                {
+                    "key": "canForceCall",
+                    "value": false
+                }
+            ]
+        },
+        {
+            "name": "RobotB",
+            "permissionList": [
+                {
+                    "key": "canControl",
+                    "value": true
+                },
+                {
+                    "key": "canVideo",
+                    "value": true
+                },
+                {
+                    "key": "canForceCall",
+                    "value": false
+                }
+            ]
+        }
+    ],
+    "youYueId": 2015
+}

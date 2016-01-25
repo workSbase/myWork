@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/contacts_bg" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <com.lenovo.lenovorobotmobile.view.RoundImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="102dp"
+            android:src="@drawable/photo" />
+
+        <LinearLayout
+            android:layout_width="292dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="45dp"
+            android:background="@drawable/input_box"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="35dp"
+                android:layout_marginRight="38dp"
+                android:layout_weight="1"
+                android:src="@drawable/login_userpic" />
+
+            <EditText
+                android:id="@+id/userName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1000"
+                android:background="@null"
+                android:hint="@string/Username"
+                android:inputType="phone"
+                android:maxLength="11"
+                android:text="@string/number"
+                android:textColor="#ffffff"
+                android:textColorHint="#66ffffff"
+                android:textCursorDrawable="@drawable/color_cursor"
+                android:textSize="21sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="292dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/input_box"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="35dp"
+                android:layout_marginRight="38dp"
+                android:layout_weight="1"
+                android:src="@drawable/login_pwdpic" />
+
+            <EditText
+                android:id="@+id/passWorld"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1000"
+                android:background="@null"
+                android:hint="@string/Password"
+                android:maxLength="16"
+                android:text="@string/passw"
+                android:textColor="#ffffff"
+                android:textColorHint="#66ffffff"
+                android:textCursorDrawable="@drawable/color_cursor"
+                android:textSize="21sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/login"
+            android:layout_width="292dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="48dp"
+            android:background="@drawable/button_selecter_login"
+            android:text="@string/LOGIN"
+            android:textColor="#5c7095"
+            android:textSize="23sp" />
+    </LinearLayout>
+
+</ScrollView>

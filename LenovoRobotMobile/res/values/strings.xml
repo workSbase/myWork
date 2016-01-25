@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">LenovoRobotMobile</string>
+    <string name="action_settings">设置</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="start">开始体验</string>
+    <string name="international_en">英文</string>
+    <string name="international_ch">中文</string>
+    <string name="ipcontent">请输入要设置的IP地址</string>
+    <string name="ponitcontent">请输入要设置的端口号</string>
+    <string name="text">这个页面上面可以引导用户.去选择自己的身份,ip 和 端口号也是可以放在这个页面上去设置</string>
+    <string name="clear">清理</string>
+    <string name="Password">密码</string>
+    <string name="passw">352372</string>
+    <string name="number">6d10928c053d480988df9e8ee811671f</string>
+    <string name="Username">用户名</string>
+    <string name="LOGIN">登录</string>
+    <string name="videocall_incall_notification_title">达尔文正在通话中</string>
+    <string name="videocall_incall_notification_text">单击返回通话</string>
+    <string name="picture">照片墙</string>
+    <string name="goalPoint">结束点</string>
+    <string name="startPoint">开始点</string>
+    <string name="Calling">正在呼叫...</string>
+    <string name="videocall">视频通话</string>
+    <string name="Contacts">联系人</string>
+    <string name="friendName">达尔文</string>
+    <string name="VoiceControl">语音控制</string>
+    <string name="VoiceControl_EN">Voice Control</string>
+    <string name="SPEAK">按住说话</string>
+    <string name="SPEAK_EN">SPEAK</string>
+    <string name="SEND">发送</string>
+    <string name="SEND_EN">send</string>
+    <string name="Mom">妈妈</string>
+    <string name="DarwinTasck">达尔文在寻找妈妈....</string>
+    <string name="ip">ip</string>
+    <string name="port">port</string>
+    <string name="international">选着语言</string>
+    <string name="server">服务器地址</string>
+    <string name="CurrentPose">当前位置</string>
+
+    
+    
+    
+    
+    <string name="sliding_value_cif">CIF</string>
+    <string name="sliding_value_480">480p</string>
+    <string name="sliding_value_720">720p</string>
+    <string name="sliding_value_1080">1080p</string>
+    <string name="sliding_value_150k">150kbps</string>
+    <string name="sliding_value_500k">500kbps</string>
+    <string name="sliding_value_800k">800kbps</string>
+    <string name="sliding_value_1m">1Mbps</string>
+    <string name="sliding_value_2m">2Mbps</string>
+    <string name="sliding_value_5m">5Mbps</string>
+    <string name="sliding_value_10m">10Mbps</string>
+    <string name="sliding_value_15">15fps</string>
+    <string name="sliding_value_20">20fps</string>
+    <string name="sliding_value_24">24fps</string>
+    <string name="sliding_value_30">30fps</string>
+    <string name="sliding_value_60">60fps</string>
+    <string name="sliding_value_0">静音</string>
+    <string name="sliding_value_50">50</string>
+    <string name="sliding_value_100">100</string>
+    <string name="sliding_value_150">150</string>
+    <string name="sliding_value_200">200</string>
+    <string name="sliding_value_255">255</string>
+    
+    
+    
+    
+    
+</resources>

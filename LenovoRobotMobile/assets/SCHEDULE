@@ -1,0 +1,21 @@
+{
+    "intent": "SCHEDULE",
+    "keyWord": [
+        {
+            "patternKey": "A",
+            "patternValue": [
+                {
+                    "key": "显示日程",
+                    "value": ""
+                },
+                {
+                    "key": "查询日程",
+                    "value": ""
+                }
+            ]
+        }
+    ],
+    "pattern": [
+        "A"
+    ]
+}

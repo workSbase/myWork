@@ -1,0 +1,60 @@
+{
+    "intent": "REPORT",
+    "keyWord": [
+        {
+            "patternKey": "A",
+            "patternValue": [
+                {
+                    "key": "(今天|昨天|前天|大前天)",
+                    "value": ""
+                },
+                {
+                    "key": "(\\d{1,2}月\\d{1,2}(日|号))",
+                    "value": ""
+                },
+                {
+                    "key": "(\\d{4}年\\d{1,2}月\\d{1,2}(日|号))",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "patternKey": "B",
+            "patternValue": [
+                {
+                    "key": "的",
+                    "value": ""
+                },
+                {
+                    "key": "",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "patternKey": "C",
+            "patternValue": [
+                {
+                    "key": "(巡视|任务|巡逻)",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "patternKey": "D",
+            "patternValue": [
+                {
+                    "key": "报告",
+                    "value": ""
+                },
+                {
+                    "key": "",
+                    "value": ""
+                }
+            ]
+        }
+    ],
+    "pattern": [
+        "A&B&C&D"
+    ]
+}

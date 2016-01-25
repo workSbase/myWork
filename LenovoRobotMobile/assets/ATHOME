@@ -1,0 +1,79 @@
+{
+    "intent": "ATHOME",
+    "keyWord": [
+        {
+            "patternKey": "A",
+            "patternValue": [
+                {
+                    "key": "[\u0391-\uFFE5]{1,5}",
+                    "value": "2001"
+                }
+            ]
+        },
+        {
+            "patternKey": "B",
+            "patternValue": [
+                {
+                    "key": "在家",
+                    "value": "2001"
+                }
+            ]
+        },
+        {
+            "patternKey": "C",
+            "patternValue": [
+                {
+                    "key": "吗",
+                    "value": "2001"
+                },
+                {
+                    "key": "么",
+                    "value": "2001"
+                },
+                {
+                    "key": "没",
+                    "value": "2001"
+                },
+                {
+                    "key": "不",
+                    "value": "2001"
+                },
+                {
+                    "key": "嘛",
+                    "value": "2001"
+                }
+            ]
+        },
+        {
+            "patternKey": "D",
+            "patternValue": [
+                {
+                    "key": "有谁",
+                    "value": "2001"
+                },
+                {
+                    "key": "都谁",
+                    "value": "2001"
+                },
+                {
+                    "key": "都有谁",
+                    "value": "2001"
+                }
+            ]
+        },
+        {
+            "patternKey": "E",
+            "patternValue": [
+                {
+                    "key": "呢",
+                    "value": "2001"
+                }
+            ]
+        }
+    ],
+    "pattern": [
+        "A&B&C",
+        "D&B",
+        "D&B&E"
+    ]
+}

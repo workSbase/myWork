@@ -1,0 +1,42 @@
+{
+    "intent": "ELECTRIC",
+    "keyWord": [
+        {
+            "patternKey": "A",
+            "patternValue": [
+                {
+                    "key": "剩余",
+                    "value": "2001"
+                },
+                {
+                    "key": "余",
+                    "value": "2001"
+                },
+                {
+                    "key": "还剩多少",
+                    "value": "2001"
+                },
+                {
+                    "key": "还有多少",
+                    "value": "2001"
+                }
+            ]
+        },
+        {
+            "patternKey": "B",
+            "patternValue": [
+                {
+                    "key": "电量",
+                    "value": "1003"
+                },
+                {
+                    "key": "电",
+                    "value": "1003"
+                }
+            ]
+        }
+    ],
+    "pattern": [
+        "A&B"
+    ]
+}

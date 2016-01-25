@@ -1,0 +1,75 @@
+{
+    "intent": "DEL_SCHEDULE",
+    "keyWord": [
+        {
+            "patternKey": "A",
+            "patternValue": [
+                {
+                    "key": "(删除|去掉)",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "patternKey": "B",
+            "patternValue": [
+                {
+                    "key": "第",
+                    "value": ""
+                },
+                {
+                    "key": "",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "patternKey": "C",
+            "patternValue": [
+                {
+                    "key": "(\\d{1,5})",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "patternKey": "D",
+            "patternValue": [
+                {
+                    "key": "(条|个|项)",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "patternKey": "E",
+            "patternValue": [
+                {
+                    "key": "(日程|条目|任务)",
+                    "value": ""
+                },
+                {
+                    "key": "",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "patternKey": "F",
+            "patternValue": [
+                {
+                    "key": "((零|一|二|两|三|四|五|六|七|八|九|十|百|千|万){1,10})",
+                    "value": ""
+                },
+                {
+                    "key": "",
+                    "value": ""
+                }
+            ]
+        }
+    ],
+    "pattern": [
+        "A&B&C&D&E",
+        "A&B&F&D&E"
+    ]
+}

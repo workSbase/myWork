@@ -1,0 +1,54 @@
+{
+    "intent": "OPEN",
+    "keyWord": [
+        {
+            "patternKey": "A",
+            "patternValue": [
+                {
+                    "key": "(打开|开)",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "patternKey": "B",
+            "patternValue": [
+                {
+                    "key": "灯",
+                    "value": "1"
+                },
+                {
+                    "key": "电灯",
+                    "value": "2"
+                },
+                {
+                    "key": "电视",
+                    "value": "3"
+                },
+                {
+                    "key": "空调",
+                    "value": "4"
+                },
+                {
+                    "key": "空气净化器",
+                    "value": "5"
+                },
+                {
+                    "key": "窗",
+                    "value": "6"
+                },
+                {
+                    "key": "窗户",
+                    "value": "7"
+                },
+                {
+                    "key": "门",
+                    "value": "8"
+                }
+            ]
+        }
+    ],
+    "pattern": [
+        "A&B"
+    ]
+}

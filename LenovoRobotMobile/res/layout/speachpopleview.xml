@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/contacts_bg" >
+
+    <TextView
+        android:id="@+id/showName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="126dp"
+        android:text="@string/Mom"
+        android:textColor="#FFFFFF"
+        android:textSize="34sp" />
+    <ImageView
+        android:id="@+id/iv_iconImg"
+        android:layout_width="135dp"
+        android:layout_height="135dp"
+        android:layout_below="@id/showName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/incomingcall_active_bg" />
+
+    <ImageView
+        android:id="@+id/iv_iconImg1"
+        android:layout_width="135dp"
+        android:layout_height="135dp"
+        android:layout_below="@id/showName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/incomingcall_active_bg" />
+
+    <ImageView
+        android:id="@+id/iv_iconImg2"
+        android:layout_width="135dp"
+        android:layout_height="135dp"
+        android:layout_below="@id/showName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/incomingcall_active_bg" />
+
+    <ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/showName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/huangying2" />
+
+    <TextView
+        android:id="@+id/textView_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_icon"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="28dp"
+        android:text="@string/DarwinTasck"
+        android:textColor="#CCFFFFFF"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textView_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="9dp"
+        android:textColor="#CCFFFFFF"
+        android:textSize="20sp" />
+
+    <ImageButton
+        android:id="@+id/myImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="41dp"
+        android:background="@drawable/button_selecter_reject" />
+
+</RelativeLayout>

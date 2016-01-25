@@ -1,0 +1,18 @@
+﻿{
+    "description": "今天天气不是很好",
+    "friendRobotList": [
+        {
+            "anotherName": "小红家的机器人",
+            "phoneNumber": "18616609483",
+            "power": "Vip",
+            "robotDescription": "我们是什么被制造出来的,现在我们在为小红家服务",
+            "robotFriendName": "达尔文",
+            "robotPictureUrl": "R.drawable.a1.png",
+            "robotStata": 1,
+            "robotYouYueId": 20001
+        }
+    ],
+    "name": "晓峰",
+    "pictureUrl": "R.drawable.def_portrait_male.png",
+    "youYueId": 10001
+}

@@ -1,0 +1,33 @@
+{
+    "intent": "DOING",
+    "keyWord": [
+        {
+            "patternKey": "A",
+            "patternValue": [
+                {
+                    "key": "你在干什么",
+                    "value": "2001"
+                },
+                {
+                    "key": "你在做什么",
+                    "value": "2001"
+                },
+                {
+                    "key": "当前任务",
+                    "value": "2001"
+                },
+                {
+                    "key": "当前的任务",
+                    "value": "2001"
+                },
+                {
+                    "key": "正在执行的任务",
+                    "value": "2001"
+                }
+            ]
+        }
+    ],
+    "pattern": [
+        "A"
+    ]
+}

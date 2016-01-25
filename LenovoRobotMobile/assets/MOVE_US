@@ -1,0 +1,25 @@
+{
+    "intent": "MOVE_US",
+    "keyWord": [
+        {
+            "key": "(Go forward|go forward)",
+            "frame": "0"
+        },
+        {
+            "key": "(Go backward|go backward)",
+            "frame": "1"
+        },
+        {
+            "key": "(Turn left|turn left)",
+            "frame": "2"
+        },
+        {
+            "key": "(Turn right|turn right)",
+            "frame": "3"
+        },
+        {
+            "key": "(Stop|stop)",
+            "frame": "4"
+        }
+    ]
+}

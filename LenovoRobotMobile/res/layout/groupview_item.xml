@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="129dp"
+    android:background="@null"
+    android:minHeight="129dp"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/pic_down"
+        android:layout_width="97dp"
+        android:layout_height="97dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="31dp"
+        android:src="@drawable/pic_down"
+        android:visibility="invisible" />
+
+    <com.lenovo.lenovorobotmobile.view.RoundImageView
+        android:id="@+id/imageView1_1"
+        android:layout_width="87dp"
+        android:layout_height="87dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="36dp"
+        android:src="@drawable/pic_001" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="27dp"
+        android:layout_toRightOf="@+id/imageView1_1"
+        android:text="@string/friendName"
+        android:textColor="#FFFFFF"
+        android:textSize="25sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:background="#19ffffff" />
+
+</RelativeLayout>

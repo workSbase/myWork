@@ -1,0 +1,9 @@
+{
+    "intent": "SCHEDULE_US",
+    "keyWord": [
+        {
+            "key": "(current reminder list)",
+            "frame": ""
+        }
+    ]
+}

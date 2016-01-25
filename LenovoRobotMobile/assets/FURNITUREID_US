@@ -1,0 +1,13 @@
+{
+    "intent": "FURNITUREID_US",
+    "furnitures": [
+        {
+            "furnitureName": "(the light|light)",
+            "furnitureId": "0"
+        },
+        {
+            "furnitureName": "(tv|Tv|TV)",
+            "furnitureId": "1"
+        }
+    ]
+}

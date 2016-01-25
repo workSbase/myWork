@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_bg" >
+
+    <!-- android:id="@+id/cameraactivity" -->
+
+    <RelativeLayout
+        android:id="@+id/cameraactivity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <android.opengl.GLSurfaceView
+            android:id="@+id/surfaceview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+        </android.opengl.GLSurfaceView>
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent" />
+
+        <!-- <com.lenovo.lenovorobotmobile.view.ControlMoveView
+            android:id="@+id/myControl_Bitmap"
+            android:layout_width="161dp"
+            android:layout_height="161dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp" /> -->
+
+        <!-- <com.lenovo.lenovorobotmobile.view.MapView
+            android:id="@+id/pathMapview1"
+            android:layout_width="570dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:visibility="gone" /> -->
+
+
+        <!-- android:layout_above="@id/pathMapview" -->
+
+        <TextView
+            android:id="@+id/forcetextView1"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="178dp"
+            android:gravity="center"
+            android:text="@string/Calling"
+            android:textColor="#ffffff"
+            android:visibility="gone" />
+
+        <!-- <ImageView
+            android:id="@+id/mySmallView"
+            android:layout_width="95dp"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="9dp"
+            android:background="@drawable/b2map_02"
+            android:visibility="visible" /> -->
+
+        <include
+            android:id="@+id/myInclude"
+            layout="@layout/includelayout"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:id="@+id/showOverBt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="30dp"
+            android:visibility="gone" >
+
+            <Button
+                android:id="@+id/videoMeetingBt"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="70dp"
+                android:background="@drawable/sharelphonebackgroud" />
+
+            <Button
+                android:id="@+id/over"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_alignBaseline="@+id/videoMeetingBt"
+                android:layout_alignBottom="@+id/videoMeetingBt"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="70dp"
+                android:background="@drawable/endcallphonebackgroud" />
+        </RelativeLayout>
+
+        <!-- <com.lenovo.lenovorobotmobile.view.ControlOrientationView
+            android:id="@+id/showControlView1"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/myControl_Bitmap"
+            android:visibility="gone" /> -->
+
+        <!-- <RelativeLayout
+            android:id="@+id/twoBt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="9dp"
+            android:layout_marginTop="19dp" >
+
+            <Button
+                android:id="@+id/saveData"
+                android:layout_width="50sp"
+                android:layout_height="50sp"
+                android:background="@drawable/savedata_bac"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/cameraButton"
+                android:layout_width="50sp"
+                android:layout_height="50sp"
+                android:layout_marginRight="54dp"
+                android:layout_toRightOf="@id/saveData"
+                android:background="@drawable/camera_bac"
+                android:visibility="gone" />
+        </RelativeLayout> -->
+
+        <com.lenovo.lenovorobotmobile.view.ControlHeadView
+            android:id="@+id/upDown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="9dp"
+            android:layout_marginTop="92dp"
+            android:visibility="gone" />
+        <!--  -->
+
+        <!-- <ImageView
+            android:id="@+id/showRobotPicture"
+            android:layout_width="125dp"
+            android:layout_height="79dp"
+            android:layout_marginLeft="27dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/call_share"
+            android:visibility="gone" /> -->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+          
+            android:layout_marginBottom="33dp" >
+
+            <Button
+                android:id="@+id/callstartVideo"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="66dp"
+                android:background="@drawable/startcall"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/callendVideo"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="66dp"
+                android:background="@drawable/endcall"
+                android:visibility="gone" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

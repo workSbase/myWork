@@ -1,0 +1,25 @@
+{
+    "intent": "LOCATION",
+    "keyWord": [
+        {
+            "patternKey": "A",
+            "patternValue": [
+                {
+                    "key": "你的位置",
+                    "value": "2001"
+                },
+                {
+                    "key": "你在哪",
+                    "value": "2001"
+                },
+                {
+                    "key": "你的坐标",
+                    "value": "2001"
+                }
+            ]
+        }
+    ],
+    "pattern": [
+        "A"
+    ]
+}

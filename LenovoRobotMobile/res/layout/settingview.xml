@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/contacts_bg"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:id="@+id/ipLayput"
+            android:layout_width="292dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/input_box"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="horizontal" >
+
+            <EditText
+                android:id="@+id/ipEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1000"
+                android:background="@null"
+                android:gravity="center"
+                android:hint="@string/ip"
+                android:inputType="phone"
+                android:maxLength="11"
+                android:textColor="#ffffff"
+                android:textColorHint="#66ffffff"
+                android:textCursorDrawable="@drawable/color_cursor"
+                android:textSize="21sp" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/layoutView"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_below="@id/ipLayput" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="292dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layoutView"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/input_box"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="horizontal" >
+
+            <EditText
+                android:id="@+id/portEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1000"
+                android:background="@null"
+                android:gravity="center"
+                android:hint="@string/port"
+                android:inputType="phone"
+                android:maxLength="11"
+                android:textColor="#ffffff"
+                android:textColorHint="#66ffffff"
+                android:textCursorDrawable="@drawable/color_cursor"
+                android:textSize="21sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/start"
+            android:layout_width="292dp"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/linearLayout1"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="46dp"
+            android:background="@drawable/button_selecter_login"
+            android:text="@string/start"
+            android:textColor="#5c7095"
+            android:textSize="23sp"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:gravity="center_horizontal"
+                android:text="@string/international"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/textsize" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="25dp"
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <RadioGroup
+                    android:id="@+id/myRadioGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <RadioButton
+                        android:id="@+id/childRadioButton_ch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:text="@string/international_ch"
+                        android:textColor="#ffffff" />
+
+                    <RadioButton
+                        android:ellipsize="marquee"
+                        android:id="@+id/childRadioButton_en"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/international_en"
+                        android:textColor="#ffffff" />
+                </RadioGroup>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/ipLayput"
+            android:layout_alignLeft="@+id/ipLayput"
+            android:layout_marginBottom="14dp"
+            android:text="@string/server"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/textsize" />
+    </RelativeLayout>
+
+</RelativeLayout>

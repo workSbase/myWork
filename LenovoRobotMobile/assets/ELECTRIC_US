@@ -1,0 +1,13 @@
+{
+    "intent": "ELECTRIC_US",
+    "keyWord": [
+        {
+            "key": "(dump energy|Dump energy)",
+            "frame": ""
+        },
+        {
+            "key": "(battery percentage|Battery percentage)",
+            "frame": ""
+        }
+    ]
+}

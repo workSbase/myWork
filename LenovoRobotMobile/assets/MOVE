@@ -1,0 +1,33 @@
+{
+    "intent": "MOVE",
+    "keyWord": [
+        {
+            "patternKey": "A",
+            "patternValue": [
+                {
+                    "key": "(前进|Go on|go on)",
+                    "value": "0"
+                },
+                {
+                    "key": "(后退|Draw back|draw back)",
+                    "value": "1"
+                },
+                {
+                    "key": "(左转|Turn left|turn left)",
+                    "value": "2"
+                },
+                {
+                    "key": "(右转|Turn right|turn right)",
+                    "value": "3"
+                },
+                {
+                    "key": "(停止|Stop|stop)",
+                    "value": "-1"
+                }
+            ]
+        }
+    ],
+    "pattern": [
+        "A"
+    ]
+}

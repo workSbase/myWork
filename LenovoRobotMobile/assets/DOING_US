@@ -1,0 +1,9 @@
+{
+    "intent": "DOING_US",
+    "keyWord": [
+        {
+            "key": "(current task|Current task)",
+            "frame": ""
+        }
+    ]
+}

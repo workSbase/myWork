@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <com.lenovo.lenovorobotmobile.view.NewMapView
+            android:id="@+id/newMapView"
+            android:layout_width="570dp"
+            android:layout_height="match_parent" >
+        </com.lenovo.lenovorobotmobile.view.NewMapView>
+
+        <com.lenovo.lenovorobotmobile.view.ControlOrientationView
+            android:id="@+id/orientationControl"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="183dp"
+            android:visibility="gone" />
+
+        <Button
+             android:layout_marginTop="150dp"
+            android:id="@+id/newStartPoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/sp_button_more_bank_normal"
+            android:text="@string/startPoint"
+            android:textColor="#000000"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/newEndPoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="210dp"
+            android:background="@drawable/sp_button_more_bank_normal"
+            android:text="@string/goalPoint"
+            android:textColor="#000000"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/setCurPose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/sp_button_more_bank_normal"
+            android:text="@string/CurrentPose"
+            android:textColor="#000000"
+            android:visibility="visible" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

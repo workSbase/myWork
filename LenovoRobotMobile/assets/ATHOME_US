@@ -1,0 +1,9 @@
+{
+    "intent": "ATHOME_US",
+    "keyWord": [
+        {
+            "key": "(who at home|Who at home)",
+            "frame": ""
+        }
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "intent": "LOCATION_US",
+    "locations": [
+        {
+            "key": "(bedroom|bed room)",
+            "value": "15.0,15.0"
+        },
+        {
+            "key": "(living room)",
+            "value": "45.0,30.0"
+        },
+        {
+            "key": "(bathroom)",
+            "value": "50.0,50.0"
+        }
+    ]
+}
