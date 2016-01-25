@@ -1,0 +1,27 @@
+﻿{
+    "description": "我是兰兰的机器人",
+    "friendList": [
+        {
+            "anotherName": "兰兰爸爸",
+            "description": "我是兰兰的爸爸",
+            "id": "213456",
+            "isRobot": "false",
+            "name": "晓风",
+            "onLine": "false",
+            "pictureUrl": "http://xxx"
+        },
+        {
+            "anotherName": "天天爸爸",
+            "description": "我是天天的爸爸",
+            "id": "213457",
+            "isRobot": "false",
+            "name": "蓝天",
+            "onLine": "true",
+            "pictureUrl": "http://xxx"
+        }
+    ],
+    "id": "123456",
+    "name": "兰宝",
+    "pictureUrl": "http://xxx",
+    "youYueId": "10000"
+}

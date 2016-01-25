@@ -1,0 +1,30 @@
+package com.lenovo.main;
+
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkServerType;
+
+public class TesterConfig
+{
+	// #public final static boolean LOGGING = ${CONFIG.LOGGING};
+	private static String DOMAIN = "sip.ifaceshow.com";
+	private static EngineSdkServerType SERVER_CONFIG = EngineSdkServerType.ES_OFFICIAL_ONLINE_SERVER;
+
+	public static String getDomain()
+	{
+		return DOMAIN;
+	}
+
+	public static void setDomain(String domain)
+	{
+		DOMAIN = domain;
+	}
+
+	public static EngineSdkServerType getServerConfig()
+	{
+		return SERVER_CONFIG;
+	}
+
+	public static void setServerConfig(EngineSdkServerType serverConfig)
+	{
+		SERVER_CONFIG = serverConfig;
+	}
+}

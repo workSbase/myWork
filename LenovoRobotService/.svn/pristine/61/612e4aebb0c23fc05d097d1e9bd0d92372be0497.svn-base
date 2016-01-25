@@ -1,0 +1,207 @@
+package com.lenovo.main.net;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
+import com.lenovo.main.ServerInterface.ServerPackgerChange;
+import com.lenovo.main.util.MyToast;
+import com.lenovo.main.util.PublicData;
+import com.lenovo.main.util.ServerUtils;
+import com.lenovo.mi.plato.comm.ITransportCallback;
+import com.lenovo.mi.plato.comm.MoPacket;
+import com.lenovo.mi.plato.comm.MoTransport;
+import com.lenovo.mi.plato.comm.TransportStatus;
+import java.util.Timer;
+import java.util.TimerTask;
+
+/**
+ * Created by Administrator on 2015/6/17.
+ */
+public class BaseConnect implements ITransportCallback {
+	public static final String TAG = "BaseConnect";
+	public static MoTransport mt;
+	public static SharedPreferences sp;
+	private Timer timer = null;
+	private TimerTask task;
+	public static MyToast myToast;
+	private ServerPackgerChange mServerResponsePackger;
+	public MoPacket moPacket;
+	public ServerUtils serverUtils = null;
+	// 连接服务器的线程
+	private Thread myConnect = null;
+	// 心跳数据包
+	private MoPacket mp;
+	public Context context;
+
+	private Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			int msgWhat = msg.what;
+			switch (msgWhat) {
+			case 1:
+				myToast.showToast(0, "服务器连接成功");
+
+				// 一旦是服务器链接成功，就马上开始发送心跳，每一秒发送一次
+				sendHeghtFrame();
+				break;
+			case 2:
+				moPacket = (MoPacket) msg.obj;
+				if (mServerResponsePackger != null) {
+					mServerResponsePackger.setServerResponsePackger(moPacket);
+				}
+				break;
+			case 3:
+				myToast.showToast(0, "链接超时正在重新链接，请稍候");
+				break;
+			case 4:
+				myToast.showToast(0, "中途掉线正在重新链接，请稍候");
+				break;
+			}
+		}
+	};
+
+	public static boolean isStartConnect = false;
+
+	public BaseConnect(Context context) {
+		// serviceHelpClassInfo = ServiceHelpClass.getServiceHelpClassInfo();
+		this.context = context;
+		myToast = new MyToast(context);
+		sp = context.getSharedPreferences("config", Context.MODE_MULTI_PROCESS);
+		mt = new MoTransport();
+	}
+
+	/**
+	 * 开启连接服务器的线程
+	 */
+	public void startConnect() {
+		if (myConnect == null) {
+			isStartConnect = true;
+			myConnect = new Thread(new MyConnect());
+			myConnect.start();
+		}
+	}
+
+	class MyConnect implements Runnable {
+		@Override
+		public void run() {
+			while (isStartConnect) {
+				boolean isConnect = false;
+
+				long time_1 = System.currentTimeMillis();
+				while (true) {
+
+					// 连接服务器
+					isConnect = mt.connect(PublicData.IP, PublicData.PORT);
+
+					SystemClock.sleep(1000);
+
+					long time_2 = System.currentTimeMillis();
+					if (isConnect) {
+						handler.sendEmptyMessage(1);
+						break;
+					}
+					if ((time_2 - time_1) > 10000) {
+						handler.sendEmptyMessage(3);
+						break;
+					}
+				}
+				if (isConnect) {
+					// 设置回调
+					mt.setCallBack(BaseConnect.this);
+
+					while (isConnect) {
+						mt.recvPacket();
+						SystemClock.sleep(50);
+						if (!aBoolean()) {
+							isConnect = false;
+
+							handler.sendEmptyMessage(4);
+							break;
+						}
+					}
+				}
+				SystemClock.sleep(1000);
+			}
+		}
+	}
+
+	/**
+	 * 服务器是否连接成功
+	 * 
+	 * @return
+	 */
+	private boolean aBoolean() {
+		return mt.getStatus() == TransportStatus.CONNECTED;
+	}
+
+	@Override
+	public void onConnected(MoTransport arg0) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onDestroy(MoTransport arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onDisconnecte(MoTransport arg0) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onNetError(MoTransport arg0, String arg1) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onPacket(MoTransport arg0, MoPacket pack) {
+		if (pack != null) {
+			Message msg = new Message();
+			msg.obj = pack;
+			msg.what = 2;
+			handler.sendMessage(msg);
+		}
+	}
+
+	public void setServerPackgerChangeInfo(
+			ServerPackgerChange mServerResponsePackger) {
+		this.mServerResponsePackger = mServerResponsePackger;
+	}
+
+	/**
+	 * 机器人端给服务器发送心跳帧
+	 */
+	private void sendHeghtFrame() {
+		// 开始发送心跳帧
+		if (timer == null) {
+			timer = new Timer();
+		}
+		task = new TimerTask() {
+			@Override
+			public void run() {
+				if (aBoolean()) {
+
+					if (mp == null) {
+						mp = new MoPacket();
+					}
+					mp.pushInt32(1);
+
+					mp.pushInt32(0);
+
+					mp.pushInt32(7);
+
+					mp.pushInt32(0);
+
+					mt.sendPacket(mp);
+
+					mp = null;
+				}
+			}
+		};
+		timer.schedule(task, 0, 1000);
+	}
+}

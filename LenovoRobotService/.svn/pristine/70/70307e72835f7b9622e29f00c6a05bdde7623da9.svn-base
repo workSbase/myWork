@@ -1,0 +1,317 @@
+package com.lenovo.main;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
+import com.lenovo.vcs.weaver.jni.Opengl;
+
+import junit.framework.Assert;
+import android.opengl.GLES20;
+import android.opengl.GLSurfaceView.Renderer;
+import android.opengl.Matrix;
+
+public class YuvRender implements Renderer {
+	private boolean isfirstFrame = true;
+	private int mProgram = 0;
+	private int[] mTextureIds = new int[1];
+
+	private final float[] mMVPMatrix = new float[16];
+	private final float[] mProjMatrix = new float[16];
+	private final float[] mVMatrix = new float[16];
+
+	private int muMVPMatrixHandle;// 总变换矩阵引用id
+	private int maPositionHandle; // 顶点位置属性引用id
+	private int maTexCoorHandle; // 顶点纹理坐标属性引用id
+	private int maTexTureHandle1;// 纹理
+	// private int maTexTureHandle2;// 纹理
+	// private int maTexTureHandle3;// 纹理
+
+	private float[] mVertexCoor = new float[] { -1.0f, 0.75f, 0.0f, -1.0f, -0.75f, 0.0f, 1.0f, 0.75f, 0.0f, 1.0f, -0.75f, 0.0f };// 顶点坐标数据缓冲
+	private float[] mTexCoor = new float[] { 0, 0, 0, 1, 1, 0, 1, 1 };// 顶点颜色值数组，每个顶点4个色彩值RGBA;
+
+	private float mRatio;
+
+	// private byte[] yuv = null;
+
+	private StringBuffer vertexShaderCode, fragmentShaderCode;
+	private int mLastRemoteVideoWidth, mLastRemovtVideoHeight, mViewWidth, mViewHeight;
+	private int mVideoRotation = -1;
+	private boolean mIsSurfaceChanged = false;
+
+	@Override
+	public void onDrawFrame(GL10 gl) {
+		Assert.assertEquals(GLES20.glGetError(), GLES20.GL_NO_ERROR);
+
+		GLES20.glClearColor(0, 0, 0, 1);
+		GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
+		// call native draw
+		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureIds[0]);
+		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+		Assert.assertEquals(GLES20.GL_NO_ERROR, GLES20.glGetError());
+		GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);// GL_LINEAR_MIPMAP_NEAREST
+		GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+
+		GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+		GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+		// LibOpenGL未实现根据宽高进行绘制，传入任何值都不起作用
+		Opengl.Draw();
+		GLES20.glUseProgram(mProgram);
+
+		// 将最终变换矩阵传入shader程序
+		Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
+		GLES20.glUniformMatrix4fv(muMVPMatrixHandle, 1, false, mMVPMatrix, 0);
+		// 为画笔指定顶点位置数据
+		GLES20.glVertexAttribPointer(maPositionHandle, 3, GLES20.GL_FLOAT, false, 0, makeFloatBuffer(mVertexCoor));
+		// 为画笔指定顶点纹理坐标数据
+		GLES20.glVertexAttribPointer(maTexCoorHandle, 2, GLES20.GL_FLOAT, false, 0, makeFloatBuffer(mTexCoor));
+
+		// 允许顶点位置数据数组
+		GLES20.glEnableVertexAttribArray(maPositionHandle);
+		GLES20.glEnableVertexAttribArray(maTexCoorHandle);
+		// 绑定纹理
+		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+		// buildTexture(mTextureIds[0], yuv, mLastRemoteVideoWidth,
+		// mLastRemovtVideoHeight);
+		// GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
+		// buildUVTexture(mTextureIds[1], yuv, mWidth, mHeight);
+
+		GLES20.glUniform1i(maTexTureHandle1, 0);
+		// GLES20.glUniform1i(maTexTureHandle2, 1);
+		// 绘制纹理矩形
+		GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+		GLES20.glDisableVertexAttribArray(maPositionHandle);
+		GLES20.glDisableVertexAttribArray(maTexCoorHandle);
+	}
+
+	@Override
+	public void onSurfaceChanged(GL10 gl, int width, int height) {
+		mViewWidth = width;
+		mViewHeight = height;
+		GLES20.glViewport(0, 0, width, height);
+		if (width < height) {
+			Matrix.orthoM(mProjMatrix, 0, -1f, 1f, -1f * height / width, 1f * height / width, -1f, 10f);
+		} else {
+			Matrix.orthoM(mProjMatrix, 0, -1f * width / height, 1f * width / height, -1f, 1f, -1f, 10f);
+		}
+
+		mIsSurfaceChanged = true;
+	}
+
+	@Override
+	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+		Opengl.DrawInit();
+		vertexShaderCode = new StringBuffer();
+		vertexShaderCode.append("uniform mat4 uMVPMatrix;\n");
+		vertexShaderCode.append("attribute vec4 aPosition;\n");
+		vertexShaderCode.append("attribute vec2 aTextureCoord;\n");
+		vertexShaderCode.append("varying vec2 vTextureCoord;\n");
+		vertexShaderCode.append("void main() {\n");
+		vertexShaderCode.append("  gl_Position = uMVPMatrix * aPosition;\n");
+		vertexShaderCode.append("  vTextureCoord = aTextureCoord;\n" + "}\n");
+
+		fragmentShaderCode = new StringBuffer();
+		// fragmentShaderCode.append("precision mediump float;\n");
+		// fragmentShaderCode.append("varying vec2 vTextureCoord;\n");
+		// fragmentShaderCode.append("uniform sampler2D sTextureY;\n");
+		// fragmentShaderCode.append("uniform sampler2D sTextureUV;\n");
+		// fragmentShaderCode.append("void main() {\n");
+		// fragmentShaderCode.append("float r,g,b,y,u,v;\n");
+		// fragmentShaderCode.append("vec4  Color1=texture2D(sTextureY,vTextureCoord);\n");
+		// fragmentShaderCode.append("vec4  Color2=texture2D(sTextureUV,vTextureCoord);\n");
+		// fragmentShaderCode.append("y=Color1.a;\n");
+		// fragmentShaderCode.append("v=Color2.r;\n");
+		// fragmentShaderCode.append("u=Color2.a;\n");
+		// fragmentShaderCode.append("y=1.1643*(y-0.0625);\n");
+		// fragmentShaderCode.append("u=u-0.5;\n");
+		// fragmentShaderCode.append("v=v-0.5;\n");
+		// fragmentShaderCode.append("r=y+1.5958*v;\n");
+		// fragmentShaderCode.append("g=y-0.39173*u-0.81290*v;\n");
+		// fragmentShaderCode.append("b=y+2.017*u;\n");
+		// fragmentShaderCode.append("gl_FragColor=vec4(r,g,b,1.0);\n");
+		// fragmentShaderCode.append("}\n");
+
+		// fragmentShaderCode.append("uniform sampler2D sTexture;\n");
+		// fragmentShaderCode.append("varying vec2 vTextureCoord;\n");
+		// fragmentShaderCode.append("void main(){\n");
+		// fragmentShaderCode.append("vec4 yuv = texture2D(sTexture,vTextureCoord);\n");
+		// fragmentShaderCode.append("vec4 color;\n");
+		// fragmentShaderCode.append("color.r =yuv.r + 1.4022 * yuv.b - 0.7011;\n");
+		// fragmentShaderCode.append("color.r = (color.r < 0.0) ? 0.0 : ((color.r > 1.0) ? 1.0 : color.r);\n");
+		// fragmentShaderCode.append("color.g =yuv.r - 0.3456 * yuv.g - 0.7145 * yuv.b + 0.53005;\n");
+		// fragmentShaderCode.append("color.g = (color.g < 0.0) ? 0.0 : ((color.g > 1.0) ? 1.0 : color.g);\n");
+		// fragmentShaderCode.append("color.b =yuv.r + 1.771 * yuv.g - 0.8855;\n");
+		// fragmentShaderCode.append("color.b = (color.b < 0.0) ? 0.0 : ((color.b > 1.0) ? 1.0 : color.b);\n");
+		// fragmentShaderCode.append("gl_FragColor = color;\n");
+		// fragmentShaderCode.append("}\n");
+
+		// fragmentShaderCode.append("varying vec2 vTextureCoord;\n");
+		// fragmentShaderCode.append("uniform sampler2D sTextureY;\n");
+		// fragmentShaderCode.append("uniform sampler2D sTextureUV;\n");
+		// fragmentShaderCode.append("const mat3 yuv2rgb = mat3(\n");
+		// fragmentShaderCode.append("                          1, 0, 1.2802,\n");
+		// fragmentShaderCode.append("                          1, -0.214821, -0.380589,\n");
+		// fragmentShaderCode.append("                          1, 2.127982, 0\n");
+		// fragmentShaderCode.append("                          );\n");
+		// fragmentShaderCode.append("void main() {\n");
+		// fragmentShaderCode.append(" vec3 yuv = vec3(\n");
+		// fragmentShaderCode.append(" 1.1643 * (texture2D(sTextureY, vTextureCoord).r - 0.0625),\n");
+		// fragmentShaderCode.append(" texture2D(sTextureUV, vTextureCoord).r - 0.5,\n");
+		// fragmentShaderCode.append(" texture2D(sTextureUV, vTextureCoord).a - 0.5\n");
+		// fragmentShaderCode.append(" );\n");
+		// fragmentShaderCode.append(" vec3 rgb = yuv * yuv2rgb;\n");
+		// fragmentShaderCode.append("gl_FragColor = vec4(rgb, 1.0);\n");
+		// fragmentShaderCode.append("}\n");
+
+		fragmentShaderCode.append("precision mediump float;\n");
+		fragmentShaderCode.append("varying vec2 vTextureCoord;\n");
+		fragmentShaderCode.append("uniform sampler2D sTexture;\n");
+		fragmentShaderCode.append("void main() {\n");
+		fragmentShaderCode.append("  	float r,g,b,y,u,v,tx,ty; \n");
+		fragmentShaderCode.append("	tx=vTextureCoord.x;\n");
+		fragmentShaderCode.append("	ty=vTextureCoord.y*0.333333333333;\n");
+		fragmentShaderCode.append("	vec4  coloryuyv = texture2D(sTexture, vec2(tx,ty));\n");
+		fragmentShaderCode.append("	y=coloryuyv.r;\n");
+		fragmentShaderCode.append("	coloryuyv = texture2D(sTexture, vec2(tx,ty+0.333333333333));\n");
+		fragmentShaderCode.append("	u=coloryuyv.r;\n");
+		fragmentShaderCode.append("	coloryuyv = texture2D(sTexture, vec2(tx,ty+0.666666666666));\n");
+		fragmentShaderCode.append("	v=coloryuyv.r;\n");
+		fragmentShaderCode.append("	y=1.164*(y-0.0625);\n");
+		fragmentShaderCode.append("   u=u-0.5;\n");
+		fragmentShaderCode.append("   v=v-0.5;\n");
+		fragmentShaderCode.append("   r=y+1.596023559570*v;\n");
+		fragmentShaderCode.append("   g=y-0.3917694091796875*u-0.8129730224609375*v;\n");
+		fragmentShaderCode.append("   b=y+2.017227172851563*u;\n");
+		fragmentShaderCode.append("	gl_FragColor=vec4(r,g,b,1.0);\n");
+		fragmentShaderCode.append("}\n");
+
+		// prepare shaders and OpenGL program
+		int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode.toString());
+		int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode.toString());
+
+		mProgram = GLES20.glCreateProgram(); // create empty OpenGL Program
+		GLES20.glAttachShader(mProgram, vertexShader); // add the vertex shader
+														// to program
+		Assert.assertEquals(GLES20.glGetError(), GLES20.GL_NO_ERROR);
+		GLES20.glAttachShader(mProgram, fragmentShader); // add the fragment
+															// shader to program
+		Assert.assertEquals(GLES20.glGetError(), GLES20.GL_NO_ERROR);
+		GLES20.glLinkProgram(mProgram); // create OpenGL program executables
+		GLES20.glGenTextures(mTextureIds.length, mTextureIds, 0);
+
+		maPositionHandle = GLES20.glGetAttribLocation(mProgram, "aPosition");
+		maTexCoorHandle = GLES20.glGetAttribLocation(mProgram, "aTextureCoord");
+		muMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
+
+		maTexTureHandle1 = GLES20.glGetUniformLocation(mProgram, "sTexture");
+
+		// maTexTureHandle1 = GLES20.glGetUniformLocation(mProgram,
+		// "sTextureY");
+		// maTexTureHandle2 = GLES20.glGetUniformLocation(mProgram,
+		// "sTextureUV");
+		Assert.assertEquals(GLES20.glGetError(), GLES20.GL_NO_ERROR);
+	}
+
+	/**
+	 * Only for JAVA decoding
+	 * 
+	 * @param id
+	 * @param data
+	 * @param width
+	 * @param height
+	 */
+	public void buildTexture(int id, byte data[], int width, int height) {
+		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, id);
+		GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);// GL_LINEAR_MIPMAP_NEAREST
+		GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+		GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+		GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+
+		if (isfirstFrame) {
+			GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_LUMINANCE, width, height * 3, 0, GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE,
+					makeByteBuffer(data));
+			isfirstFrame = false;
+		} else {
+			GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, width, height * 3, GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE,
+					makeByteBuffer(data));
+		}
+
+	}
+
+	protected ByteBuffer makeByteBuffer(byte[] arr) {
+		ByteBuffer bb = ByteBuffer.allocateDirect(arr.length);
+		bb.order(ByteOrder.nativeOrder());
+		bb.put(arr);
+		bb.position(0);
+		return bb;
+	}
+
+	protected static FloatBuffer makeFloatBuffer(float[] arr) {
+		ByteBuffer bb = ByteBuffer.allocateDirect(arr.length * 4);
+		bb.order(ByteOrder.nativeOrder());
+		FloatBuffer fb = bb.asFloatBuffer();
+		fb.put(arr);
+		fb.position(0);
+		return fb;
+	}
+
+	// public static void buildUVTexture(int id, byte data[], int width, int
+	// height)
+	// {
+	// ByteBuffer mRectBuffer = ByteBuffer.wrap(data, 0, data.length);
+	// mRectBuffer.position(0);
+	// mRectBuffer.put(data, width * height, width * height / 2);
+	// GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, id);
+	//
+	// GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
+	// GLES20.GL_TEXTURE_MIN_FILTER,
+	// GLES20.GL_LINEAR);// GL_LINEAR_MIPMAP_NEAREST
+	// GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
+	// GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+	//
+	// GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,
+	// GLES20.GL_CLAMP_TO_EDGE);
+	// GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,
+	// GLES20.GL_CLAMP_TO_EDGE);
+	// GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_LUMINANCE_ALPHA,
+	// width / 2, height /
+	// 2*3, 0, GLES20.GL_LUMINANCE_ALPHA, GLES20.GL_UNSIGNED_BYTE, mRectBuffer);
+	// }
+
+	public int loadShader(int type, String shaderCode) {
+		// create a vertex shader type (GLES20.GL_VERTEX_SHADER)
+		// or a fragment shader type (GLES20.GL_FRAGMENT_SHADER)
+		int shader = GLES20.glCreateShader(type);
+
+		// add the source code to the shader and compile it
+		GLES20.glShaderSource(shader, shaderCode);
+		GLES20.glCompileShader(shader);
+
+		return shader;
+	}
+
+	public void updateFrameInfo(int width, int height, int rotation) {
+		if (mVideoRotation != rotation) {
+			Matrix.setLookAtM(mVMatrix, 0, 0, 0, -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+			Matrix.rotateM(mVMatrix, 0, 180, 0, 1, 0);// 镜面翻转
+			Matrix.rotateM(mVMatrix, 0, -rotation * 90, 0, 0, 1);// 旋转
+		}
+
+		if (mLastRemoteVideoWidth != width || mLastRemovtVideoHeight != height || mVideoRotation != rotation || mIsSurfaceChanged) {
+			mIsSurfaceChanged = false;
+			mRatio = (float) height / width;
+
+			if (rotation % 2 == (mViewWidth > mViewHeight ? 0 : 1)) {
+				mVertexCoor = new float[] { -1 / mRatio, 1f, 0f, -1 / mRatio, -1f, 0f, 1 / mRatio, 1f, 0f, 1 / mRatio, -1f, 0f };
+			} else {
+				mVertexCoor = new float[] { -1f, mRatio, 0f, -1f, -mRatio, 0f, 1f, mRatio, 0f, 1f, -mRatio, 0f };
+			}
+		}
+		mLastRemoteVideoWidth = width;
+		mLastRemovtVideoHeight = height;
+		mVideoRotation = rotation;
+	}
+}

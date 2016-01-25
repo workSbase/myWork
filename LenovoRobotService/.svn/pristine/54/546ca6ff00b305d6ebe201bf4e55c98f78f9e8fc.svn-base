@@ -1,0 +1,309 @@
+package com.lenovo.main.TaskInterfaceInfo;
+
+import android.content.Context;
+import android.os.Handler;
+import android.os.SystemClock;
+import com.lenovo.main.MIService.BaseService;
+import com.lenovo.main.TaskInterface.LocationForProjectionInterface;
+import com.lenovo.main.util.PublicData;
+import com.lenovo.main.util.Source;
+import com.lenovo.mi.plato.comm.MoPacket;
+import com.lenovo.mi.plato.comm.MoTransport;
+import com.lenovo.mi.plato.comm.TransportStatus;
+import android.os.ServiceManager;
+import android.os.ILenovoDarwin;
+import android.util.Slog;
+import android.widget.Toast;
+
+/**
+ * 定点任务,该类中负责幻灯片的展示
+ * 
+ * @author Administrator
+ * 
+ */
+public class LocationForProjectionInfo implements
+		LocationForProjectionInterface {
+
+	public static final String TAG = "LenovoRobotService";
+	private MoTransport mMoTransport;
+	private Context context;
+	// 为投影做的一个回调接口
+	private ShowPPTInterface showPPTInterface;
+
+	public LocationForProjectionInfo(Context context, MoTransport mMoTransport) {
+		this.context = context;
+		this.mMoTransport = mMoTransport;
+	}
+
+	public boolean isGo;
+	private Thread thread = null;
+	private MNavigationStatusThread navigationStatusThread = null;
+
+	// 获取当前位置信息的线程
+	private Thread thread_navigationPose = null;
+	private MNavigationPoseThread navigationPoseThread = null;
+
+	// 幻灯片图片的下标
+	private int imageViewIndex;
+	// 幻灯片视频的下标
+	private int videoIndex;
+
+	// 如果是true表示展示的是图片,否则是视频
+	private int isImage;
+
+	// 是否获取当前机器人的位置信息,判断条件
+	public boolean isGetNavigationPose;
+	// 是否获取
+	private boolean isNavigationPose;
+
+	private Handler handler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			int status = msg.what;
+			switch (status) {
+			case 0:
+				// 1,表示机器人现在还在路上
+				Slog.i(TAG, "机器人正在前往的途中");
+				if (showPPTInterface != null) {
+					showPPTInterface.setImageIndex(0);
+				}
+				break;
+			case 1:
+				Slog.i(TAG, "机器人到了.....");
+				Toast.makeText(context, "机器人到位置上面了", Toast.LENGTH_SHORT).show();
+				if (showPPTInterface != null) {
+					showPPTInterface.setImageIndex(1);
+				}
+				// 2,把当前的线程 给关闭掉
+				closeNavigationStatusThread();
+				break;
+			}
+		};
+	};
+
+	@Override
+	public int StartLocationForProjection(float x, float y, float theta, int i,
+			int isImage, boolean isNavigationPose, boolean isStartThread,
+			int falg) {
+		try {
+			this.isImage = isImage;
+			this.isNavigationPose = isNavigationPose;
+			// 1,先要把这个定点的任务给发送下去.让机器人到该位置上面去
+			if (falg == 1) {
+
+				BaseService.LeDarwinService.SetRobotPose(x, y, theta);
+
+			} else {
+
+				BaseService.LeDarwinService.StartLocationForProjection(x, y,
+						theta, i);
+			}
+			// 2,判断当前的 i 是否是要打开投影
+			if (i == 1) {
+				// 表示打开投影.调用打开投影的方法
+				// OpenProjector();
+			}
+			// 3,开启线程,判断机器人时候已经到了该位置上面了,这个判断条件很有必要,如果我们只是让机器人去一个指定的位置上面的话,就没有必要开启线程,去判断是否到达了
+			if (isStartThread) {
+				startNavigatioStatusnThread();
+			}
+			// 4,如果 isNavigationPose表示当前要获取位置信息
+			if (isNavigationPose) {
+				startNavigationPoseThread();
+			}
+			return 0;
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return 0;
+	}
+
+	/**
+	 * 开启线程
+	 * 
+	 * @param isNavigationPose
+	 */
+	private void startNavigatioStatusnThread() {
+		// TODO Auto-generated method stub
+		if (thread == null && navigationStatusThread == null) {
+			isGo = true;
+			navigationStatusThread = new MNavigationStatusThread();
+			thread = new Thread(navigationStatusThread);
+			thread.start();
+		}
+
+	}
+
+	/**
+	 * 关闭线程
+	 */
+	private void closeNavigationStatusThread() {
+		if (thread != null && navigationStatusThread != null) {
+			isGo = false;
+			thread = null;
+			navigationStatusThread = null;
+		}
+	}
+
+	private void startNavigationPoseThread() {
+		// 表示当前要获取机器人的位置信息
+		if (thread_navigationPose == null && navigationPoseThread == null) {
+			isGetNavigationPose = true;
+			navigationPoseThread = new MNavigationPoseThread();
+			thread_navigationPose = new Thread(navigationPoseThread);
+			thread_navigationPose.start();
+		}
+	}
+
+	public void closeNavigationPoseThread() {
+		if (isNavigationPose) {
+			if (thread_navigationPose != null && navigationPoseThread != null) {
+				isGetNavigationPose = false;
+				thread_navigationPose = null;
+				navigationPoseThread = null;
+			}
+		}
+	}
+
+	@Override
+	public int getNavigationStatus() {
+		try {
+			return BaseService.LeDarwinService.getNavigationStatus();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return 0;
+	}
+
+	@Override
+	public String getNavigationPose() {
+		try {
+			return BaseService.LeDarwinService.getNavigationPose();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return null;
+	}
+
+	@Override
+	public int ExitNavigation() {
+		try {
+			return BaseService.LeDarwinService.ExitNavigation();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return 0;
+	}
+
+	@Override
+	public int getRobotTaskId() {
+		try {
+			return BaseService.LeDarwinService.getRobotTask();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return 0;
+	}
+
+	@Override
+	public void setImageViewIndex(int index) {
+		// 1,赋值图片的角标
+		this.imageViewIndex = index;
+	}
+
+	@Override
+	public void setViseoIndex(int index) {
+		// 赋值视频的角标
+		this.videoIndex = index;
+	}
+
+	class MNavigationStatusThread implements Runnable {
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			boolean isNavigation = false;
+			while (isGo) {
+				SystemClock.sleep(100);
+				// 1,判断当前机器人的任务ID 是否是,当前要执行的任务的ID
+				if (getRobotTaskId() == 5) {
+					// Slog.i(TAG, "MNavigationStatusThread 线程已经开启");
+					isNavigation = true;
+					// 2,获取当前机器人的运行状态
+					int navigationStatus = getNavigationStatus();
+					// 3,判断是否是想要的值
+					if (navigationStatus == 0 || navigationStatus == 1) {
+						handler.sendEmptyMessage(navigationStatus);
+					}
+				} else {
+					if (isNavigation) {
+						LocationForProjectionInfo.this.isGo = false;
+					}
+				}
+				// Slog.i(TAG, "判断机器人是否到位置的线程在工作  MNavigationStatusThread");
+			}
+		}
+	}
+
+	class MNavigationPoseThread implements Runnable {
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			while (isGetNavigationPose) {
+				SystemClock.sleep(1000);
+				String result = getNavigationPose();
+				if (result != null) {
+					// 1,把当前的位置信息给发送给手机端显示
+					String[] split = result.split(",");
+					if (PublicData.getUserFlag(context) == 0) {
+						sendNavigationPose(1, 11, split);
+					} else if (PublicData.getUserFlag(context) == 1) {
+						sendNavigationPose(2, 21, split);
+					}
+				}
+				// Slog.i(TAG, "获取机器人当前位置信息的线程在工作   MNavigationPoseThread");
+			}
+		}
+	}
+
+	/**
+	 * 把当前的机器人的坐标点发送给手机端进行显示
+	 * 
+	 * @param split
+	 */
+	private void sendNavigationPose(int yuan, int mubiao, String[] split) {
+		// TODO Auto-generated method stub
+		if (split != null) {
+			if (mMoTransport.getStatus() == TransportStatus.CONNECTED) {
+
+				MoPacket moPacket = new MoPacket();
+				moPacket.pushInt32(yuan);
+				moPacket.pushInt32(mubiao);
+				moPacket.pushInt32(23);
+				if (!split[0].equals("") && !split[1].equals("")
+						&& !split[0].equals("") && split.length > 1) {
+					moPacket.pushDouble(Double.parseDouble(split[0]));
+					moPacket.pushDouble(Double.parseDouble(split[1]));
+					moPacket.pushDouble(Double.parseDouble(split[2]));
+					mMoTransport.sendPacket(moPacket);
+
+					moPacket = null;
+				}
+			}
+		} else {
+			// Slog.i(TAG, "请给出正确的位置信息");
+		}
+	}
+
+	/**
+	 * 机器人是否到位置回调接口,在投影的帮助类中使用类这个接口
+	 * 
+	 * @author Administrator
+	 */
+	public interface ShowPPTInterface {
+		public void setImageIndex(int index);
+	}
+
+	public void setShowPPTInterface(ShowPPTInterface showPPTInterface) {
+		this.showPPTInterface = showPPTInterface;
+	}
+}

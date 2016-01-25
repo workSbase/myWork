@@ -1,0 +1,18 @@
+package com.lenovo.vcs.weaver.jni;
+
+public class Opengl {
+	/*
+	 * 声明了几个本地方法并且在Java中调用
+	 *
+	 */
+	public native static  boolean getfalse();
+	public native static  boolean gettrue();	
+	public native static  boolean DrawInit();
+	public native static  boolean DrawFinish();
+	public native static  boolean Draw();
+	public native static  long ConvertYuv(long source, int width, int height);
+	public native static  boolean Draw420(long isDebug , int textureY,int textureU, int textureV);
+	public native static  long ConvertYuv420(long source, int width, int height);
+	public native static  void StartCapture();
+	public native static  void StopCapture();
+}

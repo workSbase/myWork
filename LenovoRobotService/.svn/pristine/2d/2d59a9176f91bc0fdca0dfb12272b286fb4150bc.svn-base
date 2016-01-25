@@ -1,0 +1,120 @@
+package com.lenovo.main;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.text.TextPaint;
+import android.util.AttributeSet;
+import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.AutoCompleteTextView;
+import android.widget.Filterable;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.TextView;
+
+public class WeaverTextView extends LinearLayout
+{
+	private TextView mTitle;
+	private AutoCompleteTextView mValue;
+
+	public WeaverTextView(Context context)
+	{
+		super(context);
+		setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+		setOrientation(LinearLayout.HORIZONTAL);
+
+		mTitle = new TextView(context);
+		mTitle.setTextColor(Color.WHITE);
+		mTitle.setTextSize(20f);
+		mTitle.setIncludeFontPadding(false);
+		mTitle.setPaintFlags(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
+
+		mValue = new AutoCompleteTextView(context);
+		mValue.setTextColor(Color.WHITE);
+		mValue.setSingleLine(true);
+		mValue.setIncludeFontPadding(false);
+		mValue.setSingleLine(true);
+		mValue.setThreshold(1);
+		mValue.setPaintFlags(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
+		mValue.setOnTouchListener(new OnTouchListener()
+		{
+			@Override
+			public boolean onTouch(View v, MotionEvent event)
+			{
+				AutoCompleteTextView view = (AutoCompleteTextView) v;
+				view.showDropDown();
+				return false;
+			}
+		});
+
+		addView(mTitle, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		addView(mValue, new LinearLayout.LayoutParams(300, LayoutParams.WRAP_CONTENT));
+	}
+
+	public WeaverTextView(Context context, AttributeSet attrs)
+	{
+		super(context, attrs);
+	}
+
+	public WeaverTextView(Context context, AttributeSet attrs, int defStyle)
+	{
+		super(context, attrs, defStyle);
+	}
+
+	public void setTitle(String title)
+	{
+		if (title != null)
+		{
+			mTitle.setText(title + "#");
+
+		}
+		else
+		{
+			mTitle.setText(title);
+		}
+	}
+
+	public void setTitle(int resid)
+	{
+		mTitle.setText(resid);
+	}
+
+	public void setValue(String value)
+	{
+		mValue.setText(value);
+	}
+
+	public void setValueInputType(int inputType)
+	{
+		mValue.setInputType(inputType);
+	}
+
+	public void setTypeface(Typeface tf)
+	{
+		mTitle.setTypeface(tf);
+		mValue.setTypeface(tf);
+	}
+
+	public String getValue()
+	{
+		return mValue.getText() == null ? null : mValue.getText().toString();
+	}
+
+	public TextPaint getPaint()
+	{
+		return mValue.getPaint();
+	}
+
+	public void setValueWidth(int width)
+	{
+		mValue.setWidth(width);
+	}
+
+	public <T extends ListAdapter & Filterable> void setAdapter(T adapter)
+	{
+		mValue.setAdapter(adapter);
+	}
+}

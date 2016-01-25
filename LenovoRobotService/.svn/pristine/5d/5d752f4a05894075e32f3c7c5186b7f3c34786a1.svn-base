@@ -1,0 +1,27 @@
+{
+    "description": "I'm in a good mood today",
+    "friendList": [
+        {
+            "anotherName": "TTom",
+            "description": "Today it's snowing",
+            "id": "213456",
+            "isRobot": "false",
+            "name": "Tom",
+            "onLine": "true",
+            "pictureUrl": "http://xxx"
+        },
+        {
+            "anotherName": "JJack",
+            "description": "Yesterday I went hiking in the mountains",
+            "id": "213457",
+            "isRobot": "false",
+            "name": "Jack",
+            "onLine": "true",
+            "pictureUrl": "http://xxx"
+        }
+    ],
+    "id": "123456",
+    "name": "drawin",
+    "pictureUrl": "http://xxx",
+    "youYueId": "10000"
+}

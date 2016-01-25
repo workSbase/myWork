@@ -1,0 +1,239 @@
+package com.lenovo.main;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningAppProcessInfo;
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Build;
+import android.os.Environment;
+import android.telephony.TelephonyManager;
+import android.util.Log;
+
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkCPUInstruction;
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkCPUManufacturer;
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkMediaChannelSetupMode;
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkOperatingSystemType;
+import com.lenovo.vcs.weaver.enginesdk.b.logic.sip.aidl.model.CpuInfo;
+import com.lenovo.vcs.weaver.enginesdk.b.logic.sip.aidl.model.EngineConfiguration;
+import com.lenovo.vcs.weaver.enginesdk.common.DeviceInfo;
+
+public class Utility
+{
+	private static final int PHONE_ORIENTATION_UP = 3;
+	private static final int PHONE_ORIENTATION_LEFT = 0;
+	private static final int PHONE_ORIENTATION_DOWN = 1;
+	private static final int PHONE_ORIENTATION_RIGHT = 2;
+
+	public static int getDirection(int ax, int ay, int az)
+	{
+		int result = PHONE_ORIENTATION_UP;
+
+		if (ax >= 0 && ay >= 0)
+		{
+			if (ax > ay)
+			{
+				result = PHONE_ORIENTATION_LEFT;
+			}
+			else
+			{
+				result = PHONE_ORIENTATION_DOWN;
+			}
+		}
+		else if (ax <= 0 && ay >= 0)
+		{
+			if (Math.abs(ax) > ay)
+			{
+				result = PHONE_ORIENTATION_RIGHT;
+			}
+			else
+			{
+				result = PHONE_ORIENTATION_DOWN;
+			}
+		}
+		else if (ax <= 0 && ay <= 0)
+		{
+			if (Math.abs(ax) > Math.abs(ay))
+			{
+				result = PHONE_ORIENTATION_RIGHT;
+			}
+			else
+			{
+				result = PHONE_ORIENTATION_UP;
+			}
+		}
+		else if (ax >= 0 && ay <= 0)
+		{
+			if (ax > Math.abs(ay))
+			{
+				result = PHONE_ORIENTATION_LEFT;
+			}
+			else
+			{
+				result = PHONE_ORIENTATION_UP;
+			}
+		}
+		else
+		{
+			Log.e("JPA", "WRONG!");
+		}
+
+		return result;
+	}
+
+	public static String getFormatSize(long size)
+	{
+		double kiloByte = size / 1024;
+		if (kiloByte < 1)
+		{
+			return size + "B";
+		}
+
+		double megaByte = kiloByte / 1024;
+		if (megaByte < 1)
+		{
+			BigDecimal result1 = new BigDecimal(Double.toString(kiloByte));
+			return result1.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "KB";
+		}
+
+		double gigaByte = megaByte / 1024;
+		if (gigaByte < 1)
+		{
+			BigDecimal result2 = new BigDecimal(Double.toString(megaByte));
+			return result2.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "MB";
+		}
+
+		double teraBytes = gigaByte / 1024;
+		if (teraBytes < 1)
+		{
+			BigDecimal result3 = new BigDecimal(Double.toString(gigaByte));
+			return result3.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "GB";
+		}
+		BigDecimal result4 = new BigDecimal(teraBytes);
+		return result4.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "TB";
+	}
+
+	public static boolean isAppForeground(Context context)
+	{
+		ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+		String packageName = context.getApplicationContext().getPackageName();
+
+		List<RunningAppProcessInfo> appProcesses = manager.getRunningAppProcesses();
+
+		if (appProcesses == null)
+			return false;
+
+		for (RunningAppProcessInfo appProcess : appProcesses)
+		{
+			if (appProcess.processName.equals(packageName) && appProcess.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static String getInstanceId(Context ctx)
+	{
+		TelephonyManager telephonyManager = (TelephonyManager) ctx.getSystemService(Context.TELEPHONY_SERVICE);
+		String imei = telephonyManager.getDeviceId();
+		return "<" + imei + "_" + imei + ">";
+	}
+
+	public static String getHttpUserAgent(Context context)
+	{
+		String VALUE_SPLIT = "%5";
+		String software = "Weaver";
+		String version = getAppVersionName(context);
+		String oemTag = "";
+		String platform = "PHONE";
+		String deviceModel = android.os.Build.MODEL;
+		StringBuilder ua = new StringBuilder();
+		ua.append(software).append(VALUE_SPLIT).append(version == null ? "" : version).append(VALUE_SPLIT).append(oemTag).append(VALUE_SPLIT).append(platform).append(VALUE_SPLIT)
+				.append(deviceModel == null ? "" : deviceModel.replace(" ", "_"));
+		return ua.toString();
+	}
+
+	public static String getAppVersionName(Context context)
+	{
+		String versionName = "";
+		try
+		{
+			PackageManager pm = context.getPackageManager();
+			PackageInfo pi = pm.getPackageInfo(context.getPackageName(), 0);
+			versionName = pi.versionName;
+		}
+		catch (NameNotFoundException e)
+		{
+			Log.e("JPA", "Have't version name!");
+		}
+		catch (RuntimeException e)
+		{
+			Log.e("JPA", "exception when get version name.");
+		}
+		return versionName;
+	}
+
+	public static EngineConfiguration generateEngineConfiguration(Context context)
+	{
+		CpuInfo info = new CpuInfo();
+		info.setCoreNum(DeviceInfo.getNumCores());
+		info.setInstruction(Build.CPU_ABI.equals("x86") ? EngineSdkCPUInstruction.ES_CPU_INSTRUCTION_INTELX86 : EngineSdkCPUInstruction.ES_CPU_INSTRUCTION_NEON);
+
+		if (Build.BOARD.toLowerCase().startsWith("msm") || Build.HARDWARE.startsWith("qcom"))
+		{
+			info.setManufacturer(EngineSdkCPUManufacturer.ES_CPU_MANUFACTURER_QCOM);
+		}
+		else if (Build.BOARD.toLowerCase().startsWith("mt"))
+		{
+			info.setManufacturer(EngineSdkCPUManufacturer.ES_CPU_MANUFACTURER_MTK);
+		}
+		else if (Build.CPU_ABI.equals("x86"))
+		{
+			info.setManufacturer(EngineSdkCPUManufacturer.ES_CPU_MANUFACTURER_INTEL);
+		}
+		else
+		{
+			info.setManufacturer(EngineSdkCPUManufacturer.ES_CPU_MANUFACTURER_UNKNOWN);
+		}
+
+		try
+		{
+			info.setFrequencyMhz(Integer.parseInt(DeviceInfo.getMaxCpuFreq()));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		EngineConfiguration ec = new EngineConfiguration();
+		ec.setServerConfType(TesterConfig.getServerConfig());
+		ec.setLogLevel(4);
+		ec.setLogPathName(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ET_Log.txt");
+		ec.setUserAgent(getHttpUserAgent(context));
+
+		String s = "/data" + Environment.getDataDirectory().getAbsolutePath() + "/" + context.getApplicationInfo().packageName + "/config.cfg";
+		ec.setConfigCachePathFrame(s);
+
+		ec.setCpuInfo(info);
+		ec.setOs(EngineSdkOperatingSystemType.ES_OS_TYPE_ANDROID4);
+		ec.setMaxReceiveResolutionWidth(320);
+		ec.setMaxReceiveResolutionHeight(240);
+		ec.setDeviceId(getInstanceId(context));
+
+		ec.setAudioMediaMode(EngineSdkMediaChannelSetupMode.ES_MEDIA_CHANNEL_PRE_LOADED);
+		ec.setMainVideoMediaMode(EngineSdkMediaChannelSetupMode.ES_MEDIA_CHANNEL_PRE_LOADED);
+		ec.setSecondVideoMediaMode(EngineSdkMediaChannelSetupMode.ES_MEDIA_CHANNEL_DISABLED);
+		ec.setDataMediaMode(EngineSdkMediaChannelSetupMode.ES_MEDIA_CHANNEL_DISABLED);
+
+		ec.setMaxTransmitResolutionWidth(320);
+		ec.setMaxTransmitResolutionHeight(240);
+
+		return ec;
+	}
+}

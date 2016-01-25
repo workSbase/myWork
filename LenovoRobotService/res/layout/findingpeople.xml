@@ -1,0 +1,92 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/my_home_bg"
+    tools:context=".MainActivity" >
+
+    <RelativeLayout
+        android:id="@+id/rl_photo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ImageView
+            android:id="@+id/iv_incomingcall_active_bg1"
+            android:layout_width="63dp"
+            android:layout_height="63dp"
+            android:layout_centerInParent="true"
+            android:src="@+drawable/incomingcall_active_bg" />
+
+        <ImageView
+            android:id="@+id/iv_incomingcall_active_bg3"
+            android:layout_width="63dp"
+            android:layout_height="63dp"
+            android:layout_centerInParent="true"
+            android:src="@+drawable/incomingcall_active_bg" />
+        
+        <ImageView
+            android:id="@+id/iv_incomingcall_active_bg4"
+            android:layout_width="63dp"
+            android:layout_height="63dp"
+            android:layout_centerInParent="true"
+            android:src="@+drawable/incomingcall_active_bg" />
+
+        <ImageView
+            android:id="@+id/iv_incomingcall_active_bg2"
+            android:layout_width="63dp"
+            android:layout_height="63dp"
+            android:layout_centerInParent="true"
+            android:src="@+drawable/incomingcall_active_bg" />
+
+        <ImageView
+            android:id="@+id/showPicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@+drawable/pic_boy_en" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_personName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:text="@string/peopleName"
+        android:textColor="#FFFFFF"
+        android:textSize="28dp" />
+
+    <TextView
+        android:id="@+id/tv_incoming"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_personName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="6dp"
+        android:text="@string/peopleName_"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="14dp" >
+
+        <Button
+            android:id="@+id/bt_reject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selecter_button_reject" />
+
+        <Button
+            android:id="@+id/bt_answer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_toRightOf="@id/bt_reject"
+            android:background="@drawable/selecter_button_answer" />
+    </RelativeLayout>
+
+</RelativeLayout>

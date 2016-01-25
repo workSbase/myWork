@@ -1,0 +1,105 @@
+﻿{
+    "friendList": [
+        {
+            "name": "爸爸",
+            "pictureUrl": "http://",
+            "youYueId": 80001
+        },
+        {
+            "name": "妈妈",
+            "pictureUrl": "http://",
+            "youYueId": 80002
+        },
+        {
+            "name": "小姨",
+            "pictureUrl": "http://",
+            "youYueId": 80003
+        },
+        {
+            "name": "哥哥",
+            "pictureUrl": "http://",
+            "youYueId": 80003
+        }
+    ],
+    "name": "小孩",
+    "permissionList": [
+        {
+            "name": "爸爸",
+            "permission": [
+                {
+                    "key": "canVideo",
+                    "value": true
+                },
+                {
+                    "key": "canCall",
+                    "value": false
+                }
+            ]
+        },
+        {
+            "name": "妈妈",
+            "permission": [
+                {
+                    "key": "canVideo",
+                    "value": true
+                }
+                ,
+                {
+                    "key": "canCall",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "name": "小姨",
+            "permission": [
+                {
+                    "key": "canVideo",
+                    "value": true
+                }
+                ,
+                {
+                    "key": "canCall",
+                    "value": false
+                }
+            ]
+        },
+        {
+            "name": "哥哥",
+            "permission": [
+                {
+                    "key": "canVideo",
+                    "value": false
+                }
+                ,
+                {
+                    "key": "canCall",
+                    "value": false
+                }
+            ]
+        }
+    ],
+    "pictureUrl": "http://",
+    "youYueId": 1,
+    "appList":
+    [
+	    {
+	   		"appName":"VideoApp",
+	   		"userServiceList":
+	   		[
+		   		{
+		   			
+		   		}
+	   		]
+	    },
+	    {
+	   		"appName":"speachApp",
+	   		"userServiceList":
+	   		[
+		   		{
+		   			
+		   		}
+	   		]
+	    }
+    ]
+}

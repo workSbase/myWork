@@ -1,0 +1,27 @@
+package com.lenovo.main;
+
+
+import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.Notification.Builder;
+import android.content.Context;
+
+import com.lenovo.lenovoRobotService.R;
+
+@SuppressLint("NewApi")
+public class NotificationHelper
+{
+	@SuppressWarnings("deprecation")
+	public static synchronized Notification getCallingNotification(Context context)
+	{
+		Builder b = new Builder(context);
+		b.setSmallIcon(R.drawable.ic_launcher1);
+		b.setOngoing(true);
+		b.setContentTitle(context.getString(R.string.videocall_incall_notification_title));
+		b.setContentText(context.getString(R.string.videocall_incall_notification_text));
+		b.setTicker(context.getString(R.string.videocall_incall_notification_title));
+
+		return b.getNotification();
+
+	}
+}

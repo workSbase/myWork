@@ -1,0 +1,167 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.lenovo.lenovoRobotService"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="17"
+        android:targetSdkVersion="21" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.USE_SIP" />
+    <uses-permission android:name="android.permission.CONFIGURE_SIP" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.WRITE_SMS" />
+    <uses-permission android:name="android.permission.RESTART_PACKAGES" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+    <uses-permission android:name="android.permission.REORDER_TASKS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" /> -->
+
+    <application
+        android:name="com.lenovo.main.activityVideo.TesterApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/icon"
+        android:label="@string/app_name"
+        android:persistent="true"
+        android:theme="@android:style/Theme.Holo.NoActionBar" >
+
+        <!-- 不让当前应用,显示的后台的任务列表  android:excludeFromRecents="true" -->
+        <activity
+            android:name="com.lenovo.main.activity.MainActivity"
+            android:screenOrientation="landscape" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.lenovo.main.activityVideo.CameraActivity" />
+
+        <!-- 定点投影广播接收者 -->
+        <receiver android:name="com.lenovo.main.broadcastreceiver.OpenProjectionBroadCastReceiver" >
+            <intent-filter>
+                <action android:name="projection" />
+            </intent-filter>
+        </receiver>
+
+        <!-- 表情显示广播 -->
+        <receiver android:name="com.lenovo.main.broadcastreceiver.FaceChangeBroadCastReceiver" >
+            <intent-filter>
+                <action android:name="faceState" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="com.lenovo.main.MIService.MyService" >
+            <intent-filter>
+                <action android:name="com.lenovo.www" />
+            </intent-filter>
+        </service>
+
+        <activity android:name="com.lenovo.main.activity.FindingPeopleActivity" >
+        </activity>
+
+        <receiver android:name="com.lenovo.main.broadcastreceiver.RobotSpeechCallBroadCastReceiver" >
+
+            <!-- 机器人端语音控制打电话 -->
+            <intent-filter>
+                <action android:name="darwinControlCall" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.lenovo.main.broadcastreceiver.SpeechControlMoveBroadCastReceiver" >
+
+            <!-- 语音控制前进后退,左转右转 -->
+            <intent-filter android:priority="1000" >
+                <action android:name="darwinControl" />
+            </intent-filter>
+        </receiver>
+        <!-- <receiver android:name="com.lenovo.main.broadcastreceiver.UserChangeBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="userChange" />
+            </intent-filter>
+        </receiver> -->
+        <receiver android:name="com.lenovo.main.broadcastreceiver.RobotFriendCallPhoneBroadCastReceiver" >
+
+            <!-- 主叫视频发过来的广播 -->
+            <intent-filter>
+                <action android:name="call.phone" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.lenovo.main.broadcastreceiver.NotificationBroadCastReceiver"
+            android:permission="oem.permission.SENDMAIL" >
+
+            <!-- 通知消息显示出来的广播 -->
+            <intent-filter>
+                <action android:name="notification" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.lenovo.main.broadcastreceiver.MeasureBroadCastReceiver" >
+
+            <!-- 测量身高的广播 -->
+            <intent-filter>
+                <action android:name="RecognizeDate" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.lenovo.main.broadcastreceiver.MeasureBroadCastReceiver" >
+
+            <!-- 播报检测到谁的广播 -->
+            <intent-filter>
+                <action android:name="RecognizePerson" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.lenovo.main.broadcastreceiver.CloseProjectBroadCastReceiver" >
+
+            <!-- 接收关闭投影的广播 -->
+            <intent-filter>
+                <action android:name="closeProject" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.lenovo.main.broadcastreceiver.SceneBroadCastReceiver" >
+
+            <!-- 场景演示的广播 -->
+            <intent-filter>
+                <action android:name="com.lenvovo.YY" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.lenovo.main.broadcastreceiver.BootCompleteReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

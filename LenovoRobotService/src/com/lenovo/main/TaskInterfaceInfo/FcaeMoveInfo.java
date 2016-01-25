@@ -1,0 +1,29 @@
+package com.lenovo.main.TaskInterfaceInfo;
+
+import com.lenovo.main.MIService.BaseService;
+import com.lenovo.main.TaskInterface.FcaeMove;
+//import android.os.ServiceManager;
+//import android.os.ILenovoDarwin;
+
+public class FcaeMoveInfo implements FcaeMove {
+
+	@Override
+	public void MStartVisualServoTask() {
+		// TODO Auto-generated method stub
+		try {
+			// BaseService.LeDarwinService.StartVisualServoTask();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+	@Override
+	public void MExitVisualServoTask() {
+		// TODO Auto-generated method stub
+		try {
+			// BaseService.LeDarwinService.ExitVisualServoTask();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+}

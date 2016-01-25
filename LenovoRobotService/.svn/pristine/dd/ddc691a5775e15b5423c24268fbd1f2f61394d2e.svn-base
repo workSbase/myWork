@@ -1,0 +1,57 @@
+package com.lenovo.main;
+
+import android.content.Context;
+import android.graphics.PixelFormat;
+import android.opengl.GLSurfaceView;
+import android.opengl.GLSurfaceView.Renderer;
+import android.view.Gravity;
+import android.view.View;
+import android.view.WindowManager;
+
+public class FloatTool {
+
+	private static final String SERVICE = "window";
+	private Context mContext;
+
+	private View mView;
+
+	public FloatTool(Context ctx) {
+		mContext = ctx;
+
+		// addTouchEvent(view);
+		// this.container = container;
+	}
+
+	public void addView(View v, int width, int height) {
+		WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+		lp.type = WindowManager.LayoutParams.TYPE_PHONE;
+		// lp.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+		lp.format = PixelFormat.RGBA_8888;
+		lp.gravity = Gravity.TOP | Gravity.RIGHT;
+		lp.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+		// WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL|
+
+		lp.width = width;
+		lp.height = height;
+
+		((WindowManager) mContext.getSystemService(SERVICE)).addView(v, lp);
+	}
+
+	public void delView() {
+		if (mView != null) {
+			((WindowManager) mContext.getSystemService(SERVICE))
+					.removeView(mView);
+			mView = null;
+		}
+	}
+
+	public GLSurfaceView generateView(Renderer renderer) {
+		GLSurfaceView view = new GLSurfaceView(mContext);
+		view.setEGLContextClientVersion(2);
+		view.setRenderer(renderer);
+		view.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+
+		mView = view;
+		return view;
+	}
+}

@@ -1,0 +1,893 @@
+package com.lenovo.main;
+
+import android.annotation.SuppressLint;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.hardware.Camera;
+import android.hardware.Camera.CameraInfo;
+import android.hardware.Camera.Size;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.media.AudioManager;
+import android.media.MediaRecorder;
+import android.opengl.GLSurfaceView;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.TextureView;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
+import com.lenovo.lenovoRobotService.R;
+import com.lenovo.main.CameraManager.CameraListener;
+import com.lenovo.main.MIService.BaseService;
+import com.lenovo.main.util.CloseSpeechUtils;
+import com.lenovo.main.util.SoundUtils;
+import com.lenovo.main.util.Source;
+import com.lenovo.main.util.PlayMusicTools;
+import com.lenovo.main.util.PublicData;
+import com.lenovo.main.util.VideoFrame;
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkAccountInformation;
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkAccountState;
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkAudioChannelState;
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkBiException;
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkCallEndReason;
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkCallInformation;
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkCallState;
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkDataChannelState;
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkEngineInformation;
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkMsgSender;
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkVideoChannelState;
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkVideoPixelFormat;
+import com.lenovo.vcs.weaver.enginesdk.b.logic.sip.delegate.CallDataListener;
+import com.lenovo.vcs.weaver.enginesdk.b.logic.sip.delegate.EngineListener;
+import com.lenovo.vcs.weaver.enginesdk.b.logic.sip.service.AbstractInCallActivity;
+import com.lenovo.vcs.weaver.enginesdk.b.logic.sip.utility.AudioIncallManager;
+import com.lenovo.vcs.weaver.enginesdk.b.logic.sip.utility.MediaManager;
+import com.lenovo.vcs.weaver.enginesdk.b.logic.sip.utility.MediaManager.InCallMode;
+import com.lenovo.vcs.weaver.jni.Opengl;
+
+/**
+ * 通话界面。EngineSDK提供了一个基类，客户端需要自行实现具体的子类。通话过程中的交互都在这个子类中完成。
+ * 这个界面主要要实现两个接口类：EngineListener, CallDataListener。
+ * EngineListener的接口方法主要会通知Engine的状态、Account的状态和Call的状态，
+ * 而CallDataListener主要是获取Call数据（音频视频等）。
+ * 而向EngineSDK发起操作主要通过EngineLoader这个类（包括通话中的各个操作、挂断通话等），
+ * 这个类的实例可以通过AbstractInCallActivity基类提供的getLoader()方法来获取。
+ * 
+ * @author luolong1
+ */
+@SuppressLint("HandlerLeak")
+public class CameraActivity extends AbstractInCallActivity implements
+		SensorEventListener, OnClickListener, EngineListener, CallDataListener,
+		/* DialogInterface.OnClickListener, */CameraListener
+/* WeaverUserSipStatusListener */{
+
+	protected static final String TAG = "CameraActivity";
+	private TextureView myCameraView;
+	private GLSurfaceView mTv2;
+	private RelativeLayout mSubLayout;
+
+	private Handler mMainHandler;
+	private YuvRender mRender;
+
+	private boolean mIsCalling = false;
+	private int mPhoneOrientation = 3;
+
+	private int callflag = 1;
+	boolean isStartVideo = false;
+
+	private Button startVideo;
+	private Button endVideo;
+	private Button overVideo;
+
+	public static Handler mHandler = null;
+	private PlayMusicTools music;
+	public static Camera camera;
+	public static SurfaceHolder holder;
+	public static MediaRecorder mMediaRecorder;
+
+	private int i = 0;
+
+	private RelativeLayout myRelativelayout;
+
+	/**
+	 * overButtonSwitchView 该View是覆盖在视频上面的一层View,点击该View的时候会出现,屏幕下方的几个按钮
+	 */
+	private View overButtonSwitchView;
+
+	private int videoPagerShowFlag;
+	private SharedPreferences sp;
+	private Button genRen;
+	private static Button imageBt;
+	public static int pictureId_Camera;
+
+	private Typeface typeface;
+	public static byte[] by;
+
+	public static int pictureId_video;
+
+	int isFirstOneOclick = 0;
+	private Button closeProjectionButton;
+	private Button openProjection;
+
+	/**
+	 * 设置图片的ID
+	 * 
+	 * @param pictureId
+	 */
+	@SuppressWarnings("deprecation")
+	public static void setPicture(int pictureId) {
+		pictureId_video = pictureId;
+		String videoPath = Source.getVideoPath(pictureId);
+		if (videoPath != null) {
+			Bitmap videoThumbnail = VideoFrame.getVideoThumbnail(videoPath);
+			imageBt.setBackgroundDrawable(new BitmapDrawable(videoThumbnail));
+			BaseService.locationForProjectionInterface.setViseoIndex(pictureId);
+		} else {
+			pictureId_Camera = Source.getImageSourceId(pictureId);
+			imageBt.setBackgroundResource(pictureId_Camera);
+			BaseService.locationForProjectionInterface
+					.setImageViewIndex(pictureId_Camera);
+		}
+	}
+
+	/**
+	 * *************************************************************************
+	 * *****
+	 */
+	public static Handler handler;
+	private float downY;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+
+		try {
+
+			handler = new Handler() {
+				public void handleMessage(android.os.Message msg) {
+					int flag = msg.what;
+					switch (flag) {
+					case 7:
+						Toast.makeText(CameraActivity.this, "9018 端口连接成功",
+								Toast.LENGTH_LONG).show();
+						break;
+					case 8:
+						Toast.makeText(CameraActivity.this, "9018 端口连接失败",
+								Toast.LENGTH_LONG).show();
+						break;
+					case 9:
+						Toast.makeText(CameraActivity.this, "该用户当前是在线状态",
+								Toast.LENGTH_LONG).show();
+						break;
+					case 10:
+						Toast.makeText(CameraActivity.this, "该用户当前是不在线状态",
+								Toast.LENGTH_LONG).show();
+						break;
+					case 11:
+
+						break;
+					case 12:
+						BaseService.answerPhoneInterface.stopSpeaking();
+
+						videoStart();
+						break;
+					}
+				}
+			};
+
+			sp = getSharedPreferences("config", Context.MODE_MULTI_PROCESS);
+			// followFlag = sp.getInt("followFlag", -1);
+
+			mHandler = handler;
+
+			typeface = Typeface.createFromAsset(getAssets(),
+					"fonts/lenovo_font.ttf");
+
+			super.onCreate(savedInstanceState);
+			setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+			// 播放音乐类
+			music = new PlayMusicTools(this);
+
+			// 加载布局文件
+			setContentView(R.layout.cameraxml_);
+
+			// 关闭投影的Button
+			closeProjectionButton = (Button) findViewById(R.id.closeProjection);
+			closeProjectionButton.setOnClickListener(this);
+
+			// 打开投影的Button
+			openProjection = (Button) findViewById(R.id.openProjection);
+			openProjection.setOnClickListener(this);
+
+			myRelativelayout = (RelativeLayout) findViewById(R.id.myRelativelayout);
+
+			imageBt = (Button) findViewById(R.id.imageBt);
+			imageBt.setOnClickListener(this);
+
+			mSubLayout = (RelativeLayout) findViewById(R.id.rl);
+
+			mMainHandler = new Handler(getMainLooper());
+			overVideo = (Button) findViewById(R.id.overvideo);
+			overVideo.setOnClickListener(this);
+
+			genRen = (Button) findViewById(R.id.genRen);
+			genRen.setTypeface(typeface);
+			if (PublicData.getUserFlag(CameraActivity.this) != 0) {
+				genRen.setText("startFollow");
+			}
+
+			genRen.setOnClickListener(this);
+			startVideo = (Button) findViewById(R.id.startvideo);
+			startVideo.setOnClickListener(this);
+			endVideo = (Button) findViewById(R.id.endvideo);
+			endVideo.setOnClickListener(this);
+
+			// 传递过来的视频
+			mTv2 = (GLSurfaceView) findViewById(R.id.surfaceview);
+			mRender = new YuvRender();
+			mTv2.setEGLContextClientVersion(2);
+			mTv2.setRenderer(mRender);
+			mTv2.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+			mTv2.setVisibility(View.INVISIBLE);
+			// 自己的视频
+			myCameraView = new CameraTextureView(this);
+			myCameraView.setOnClickListener(this);
+
+			overButtonSwitchView = findViewById(R.id.showMyView);
+			overButtonSwitchView.setOnClickListener(this);
+
+			videoPagerShowFlag = sp.getInt("value", 0);
+
+			// 本地端视频布局
+			LayoutParams layoutParams = new FrameLayout.LayoutParams(190, 240,
+					Gravity.LEFT | Gravity.TOP);
+			layoutParams.leftMargin = 14;
+			layoutParams.topMargin = 14;
+			mSubLayout.addView(myCameraView, layoutParams);
+
+			EngineSdkCallInformation call = getLoader().getCurrentCallInfo();
+
+			if (videoPagerShowFlag != 1/* 如果当前不是视频监控,显该View */) {
+				overButtonSwitchView.setVisibility(View.VISIBLE);
+			}
+
+			if (/* getLoader().getCurrentCallInfo() */call != null) {
+				CameraManager.resetToDefaultCamera();
+				// 屏幕解锁
+				getWindow().addFlags(
+						WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+
+				EngineSdkCallState state = call.getCallState();
+				if (state == EngineSdkCallState.ES_STATE_ON_CALL_REQUEST_CALLING_OUT
+						|| state == EngineSdkCallState.ES_STATE_ON_CALL_CALLING_OUT
+						|| state == EngineSdkCallState.ES_STATE_ON_CALL_RINGBACK_TONE) {
+					if (state == EngineSdkCallState.ES_STATE_ON_CALL_REQUEST_CALLING_OUT) {
+
+						getLoader().makeCall(call.getCallConfiguration(), this);
+					}
+				} else if (state == EngineSdkCallState.ES_STATE_ON_CALL_IN_ACTIVE_SESSION) {
+
+				} else if (/* 电话打进来的状态值 */state == EngineSdkCallState.ES_STATE_ON_CALL_INCOMMING_CALL) {
+					// 两个按钮,一个开启视频,一个是挂断视频
+					startVideo.setVisibility(View.VISIBLE);
+					endVideo.setVisibility(View.VISIBLE);
+					// 这个是对标示的一些判断
+					if (videoPagerShowFlag == 1/* 遥控 */) {
+						// 有视频来的时候,这个时候把媒体音量调小
+						music.stopMusic();
+						startVideo.setVisibility(View.GONE);
+						endVideo.setVisibility(View.GONE);
+						getLoader().answerCall(
+								getLoader().getCurrentCallInfo(),
+								CameraActivity.this);
+					} else if (videoPagerShowFlag == 10/* 在找人界面点击,接听电话 */) {
+						music.stopMusic();
+						startVideo.setVisibility(View.GONE);
+						endVideo.setVisibility(View.GONE);
+						getLoader().answerCall(
+								getLoader().getCurrentCallInfo(),
+								CameraActivity.this);
+					} else if (videoPagerShowFlag == 6/* 视频拨打出去的时候使用 ,主叫界面点击好友 */) {
+						// overButtonSwitchView.setVisibility(View.VISIBLE);
+						myCameraView.setVisibility(View.VISIBLE);
+						genRen.setVisibility(View.VISIBLE);
+					}
+					/*
+					 * else {
+					 * 
+					 * BaseService.answerPhoneInterface.startSpeech(
+					 * "元庆,谭福生打电话找您是否要接听", true, true); }
+					 */
+				} else if (state == EngineSdkCallState.ES_STATE_ON_CALL_CALL_ENDED
+						|| state == EngineSdkCallState.ES_STATE_ON_CALL_CALL_ENDING) {
+					music.stopMusic();
+					finish();
+				}
+			} else {
+				music.stopMusic();
+				finish();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+	/**
+	 * 开启视频通话
+	 */
+	private void videoStart() {
+		MediaManager.getInstance().stopPlaying();
+		getLoader().answerCall(getLoader().getCurrentCallInfo(),
+				CameraActivity.this);
+		overButtonSwitchView.setVisibility(View.VISIBLE);
+		// tools.showView();
+		music.stopMusic();
+		startVideo.setVisibility(View.GONE);
+		endVideo.setVisibility(View.GONE);
+
+		startVideo.setFocusable(false);
+		isStartVideo = true;
+		myCameraView.setVisibility(View.VISIBLE);
+		CameraManager.openCamera(CameraActivity.this,
+				myCameraView.getSurfaceTexture());
+		getLoader().getCurrentCallInfo().setTransmitingAudioMute(false);
+
+		BaseService.answerPhoneInterface.PhoneConnected();
+
+	}
+
+	/**
+	 * 关闭视频通话
+	 */
+	private void videoClose() {
+		// sendMsg(2);
+		getLoader().endCall(getLoader().getCurrentCallInfo(), "");
+		CameraManager.closeCamera();
+		startVideo.setVisibility(View.GONE);
+		endVideo.setVisibility(View.GONE);
+		music.stopMusic();
+		endVideo.setFocusable(false);
+
+		// serviceHelpClassInfo.phoneDisconnected();
+		BaseService.answerPhoneInterface.PhoneDisconnected();
+		// serviceHelpClassInfo.exitAnswerPhone();
+	}
+
+	protected void sendBroadCastNotification() {
+		Intent intent = new Intent();
+		// TODO Auto-generated method stub
+		intent.setAction("notification");
+		sendBroadcast(intent);
+	}
+
+	@Override
+	public void onPause() {
+
+		MediaManager.getInstance().stopPlaying();
+		// CameraManager.closeCamera();
+		SensorManager sm = (SensorManager) getSystemService(SENSOR_SERVICE);
+		sm.unregisterListener(this);
+		// enableSocket = false;
+		music.stopMusic();
+
+		super.onPause();
+	}
+
+	@Override
+	public void onResume() {
+
+		SensorManager sm = (SensorManager) getSystemService(SENSOR_SERVICE);
+		sm.registerListener(this,
+				sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+				SensorManager.SENSOR_DELAY_NORMAL);
+
+		super.onResume();
+	}
+
+	@Override
+	public void onDestroy() {
+
+		CameraManager.closeCamera();
+
+		// getMainHandler().post(new Runnable() {
+		// @Override
+		// public void run() {
+		// getLoader().removeEngineListener(CameraActivity.this);
+		// }
+		// });
+
+		isFirstOneOclick = 0;
+		music.stopMusic();
+		MediaManager.getInstance().stopPlaying();
+
+		// 开启录音的广播
+		CloseSpeechUtils.setCloseSpeechFlag(CameraActivity.this, 2);
+
+		int robotTaskId = BaseService.backToDockTaskInterface.getRobotTaskId();
+		if (robotTaskId == 3) {
+			BaseService.answerPhoneInterface.ExitVideoCallTask();
+		} else if (robotTaskId == 4) {
+			BaseService.remoteControlInterface.ExitRemoteCtrl();
+		} else if (robotTaskId == 5) {
+			BaseService.locationForProjectionInterface.ExitNavigation();
+		}
+		sp.edit().putInt("followFlag", 5).commit();
+
+		CloseSpeechUtils.setCloseSpeechFlag(CameraActivity.this, 2);
+
+		BaseService.projectorInterface.CloseProjector();
+
+		super.onDestroy();
+
+	}
+
+	/**
+	 * 获取照片数组
+	 * 
+	 * @return
+	 */
+	public static byte[] getbyte() {
+		return by;
+	}
+
+	@Override
+	public void onPreviewFrame(byte[] data, Camera camera) {
+		Size size = camera.getParameters().getPreviewSize();
+		by = data;
+		// 图像 旋转
+		if (mIsCalling && getLoader().getCurrentCallInfo() != null) {
+			int orientation = mPhoneOrientation;
+			if (CameraManager.getCurrentCameraFacing() == CameraInfo.CAMERA_FACING_FRONT
+					&& orientation % 2 == 1) {
+				orientation = (orientation + 1) % 4;
+			}
+			getLoader().getCurrentCallInfo().sendDataOnMainVideoChannel(
+					EngineSdkVideoPixelFormat.ES_PIXEL_FORMAT_NV21, size.width,
+					size.height, (char) orientation, data);
+		}
+	}
+
+	/**
+	 * 各种按钮的点击事件
+	 */
+	@Override
+	public void onClick(View v) {
+		openOptionsMenu();
+		int id = v.getId();
+		switch (id) {
+		case R.id.imageBt:
+			closeProjectionButton.setVisibility(View.VISIBLE);
+			openProjection.setVisibility(View.VISIBLE);
+
+			showPPT();
+
+			break;
+		case R.id.genRen:
+			// TODO Auto-generated method stub
+			if (i == 0) {
+				BaseService.followMeTaskInterface.StartFollowMeTask();
+				i = 1;
+				if (PublicData.getUserFlag(CameraActivity.this) == 0) {
+					genRen.setText("结束跟人");
+				} else {
+					genRen.setText("endFollow");
+				}
+			} else {
+				BaseService.followMeTaskInterface.ExitFollowMeTask();
+				if (PublicData.getUserFlag(CameraActivity.this) == 0) {
+					genRen.setText("开始跟人");
+				} else {
+					genRen.setText("startFollow");
+				}
+				i = 0;
+			}
+			break;
+		case R.id.closeProjection:
+			BaseService.projectorInterface.CloseProjector();
+			break;
+		case R.id.openProjection:
+			BaseService.projectorInterface.OpenProjector();
+			new Thread() {
+				public void run() {
+					SystemClock.sleep(10000);
+					handler.sendEmptyMessage(11);
+				};
+			}.start();
+			break;
+		case R.id.overvideo:
+			// 挂断视频通话
+			getLoader().endCall(getLoader().getCurrentCallInfo(), "");
+			BaseService.answerPhoneInterface.PhoneDisconnected();
+			break;
+		case R.id.showMyView:
+			// 显示跟人按钮,图片,和挂断按钮的布局
+			if (callflag == 1) {
+				myRelativelayout.setVisibility(View.VISIBLE);
+				callflag = 0;
+			} else {
+				myRelativelayout.setVisibility(View.GONE);
+				callflag = 1;
+			}
+
+			break;
+		case R.id.startvideo:
+			// 有视频打进来的时候,开启视频的按钮
+			// BaseService.answerPhoneInterface.stopSpeaking();
+			// 有视频来的时候,这个时候把媒体音量调小
+			SoundUtils.setSoundData(CameraActivity.this, 40);
+
+			videoStart();
+
+			break;
+		case R.id.endvideo:
+			// 有视频打进来的时候,挂断视频的按钮
+			BaseService.answerPhoneInterface.stopSpeaking();
+			videoClose();
+			//
+			break;
+		}
+	}
+
+	/**
+	 * 展示PPT
+	 */
+	private void showPPT() {
+		String robotCurrentPose = BaseService.locationForProjectionInterface
+				.getNavigationPose();
+		if (robotCurrentPose != null) {
+
+			String[] robotCurrentCoordinate = robotCurrentPose.split(",");
+
+			if (!(robotCurrentCoordinate[0].equals("-4.845") && robotCurrentCoordinate[1]
+					.equals("-0.179"))) {
+				BaseService.locationForProjectionInterface
+						.StartLocationForProjection(-4.845f, -0.179f, -1.77f,
+								1, 1, false, true, 0);
+			} else if ((robotCurrentCoordinate[0].equals("-4.845") && robotCurrentCoordinate[1]
+					.equals("-0.179"))) {
+				BaseService.projectorInterface.OpenProjector();
+			}
+		} else {
+			Toast.makeText(this, "机器人当前位置信息错误,没办法到达目的地", Toast.LENGTH_SHORT)
+					.show();
+		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// 返回键 挂断电话
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			music.stopMusic();
+			getLoader().endCall(getLoader().getCurrentCallInfo(), "");
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public void onWaitWakeupTimeout(String wakeup_caller_num,
+			String wakeup_callee_num, String last_waiting_sip_callID) {
+	}
+
+	@Override
+	public void onMainVideoData(long callToken, long pointer, int width,
+			int height, char rotation, EngineSdkVideoPixelFormat format) {
+		Opengl.ConvertYuv(pointer, width, height);
+		mRender.updateFrameInfo(width, height, rotation);
+
+		if (!mTv2.isShown()) {
+			mMainHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					mTv2.setVisibility(View.VISIBLE);
+				}
+			});
+		}
+		mTv2.requestRender();
+	}
+
+	@Override
+	public void on2ndVideoData(long callToken, long pointer, int width,
+			int height, char rotation, EngineSdkVideoPixelFormat format) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void on2ndVideoStateChange(long callToken,
+			EngineSdkVideoChannelState p_state) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onAudioReceiveStateChange(long callToken,
+			EngineSdkAudioChannelState p_state) {
+		if (p_state == EngineSdkAudioChannelState.ES_STATE_ON_AUDIO_CHANNEL_MUTE) {
+			// mTargetAudioOn = false;
+		} else {
+			// mTargetAudioOn = true;
+		}
+
+	}
+
+	@Override
+	public void onAudioTransmitStateChange(long callToken,
+			EngineSdkAudioChannelState p_state) {
+
+		if (p_state == EngineSdkAudioChannelState.ES_STATE_ON_AUDIO_CHANNEL_MUTE) {
+			// mSelfAudioOn = false;
+		} else {
+			// mSelfAudioOn = true;
+		}
+	}
+
+	@Override
+	public void onDataStateChange(long callToken,
+			EngineSdkDataChannelState p_state) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onBiException(long callToken,
+			EngineSdkBiException bi_exception, int detail) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onMainVideoFilterSetResult(EngineSdkCallInformation p_call,
+			boolean is_success, long filtertype) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onMainVideoRecvVideoFilter(EngineSdkCallInformation p_call,
+			long filtertype) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onEngineStateChange(EngineSdkEngineInformation p_state) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onCallStateChange(EngineSdkCallInformation callInfo,
+			EngineSdkCallState state) {
+		if (state == EngineSdkCallState.ES_STATE_ON_CALL_CALL_ENDED
+				|| state == EngineSdkCallState.ES_STATE_ON_CALL_CALL_ENDING) {
+			if (state == EngineSdkCallState.ES_STATE_ON_CALL_CALL_ENDED
+					&& callInfo.getCallEndReason() == EngineSdkCallEndReason.ES_CALL_END_CALLED_USER_NOT_ANSWER_PLS_TRY_LATER) {
+				sendBroadCastNotification();
+			} else if (callInfo.getCallEndReason() == EngineSdkCallEndReason.ES_CALL_END_CANCELLED) {
+				// 当对方挂断视频的时候，这个时候，这个判断条件会走到，这个时候就是一个未接来电，要有notification的提示
+				sendBroadCastNotification();
+			} else if (callInfo.getCallEndReason() == EngineSdkCallEndReason.ES_CALL_NORMAL_END) {
+
+				BaseService.answerPhoneInterface.PhoneDisconnected();
+			}
+			mIsCalling = false;
+			// 通话结束
+			MediaManager.getInstance().stopPlaying();
+			AudioIncallManager.getInstance(this).leaveInCallState();
+			Opengl.DrawFinish();
+			setResult(RESULT_OK, null);
+
+			finish();
+		} else if (state == EngineSdkCallState.ES_STATE_ON_CALL_ANSWERING_CALL
+				|| state == EngineSdkCallState.ES_STATE_ON_CALL_IN_ACTIVE_SESSION) {
+			mIsCalling = true;
+			// 通话开始
+			MediaManager.getInstance().stopPlaying();
+			AudioIncallManager.getInstance(this).entryInCallState();
+			MediaManager.getInstance().setInCallingMode(InCallMode.AUDIO_VIDEO);
+			MediaManager.getInstance().setHandfree(true);
+			MediaManager.getInstance().operateSystemAudio();
+
+		} else if (state == EngineSdkCallState.ES_STATE_ON_CALL_INCOMMING_CALL
+				|| state == EngineSdkCallState.ES_STATE_ON_CALL_CALLING_OUT) {
+			mIsCalling = false;
+		}
+		if (state == EngineSdkCallState.ES_STATE_ON_CALL_IN_ACTIVE_SESSION) {
+			long callLocalToken = callInfo.getCallConfiguration()
+					.getCallLocalToken();
+
+			// short maxFrameheight = 100; // Max width
+			// short maxFramewidth = 100; // Max height
+			// short maxKbps = 15; max bitrate 最大是 64
+
+			short maxFrameheight = 160; // Max width
+			short maxFramewidth = 120; // Max height
+
+			char maxFps = 8; // max fps 最大是 8
+			short maxKbps = 64; // max bitrate 最大是 64
+
+			callInfo.setRemoteMainVideoAdjustmentRangeLimitation(
+					callLocalToken, maxFrameheight, maxFramewidth, maxFps,
+					maxKbps);
+		}
+	}
+
+	@Override
+	public void onAccountStateChange(EngineSdkAccountInformation account,
+			EngineSdkAccountState state) {
+		if (state == EngineSdkAccountState.ES_STATE_ON_ACC_REGISTERED) {
+			handler.sendEmptyMessage(9);
+		} else {
+			handler.sendEmptyMessage(10);
+		}
+	}
+
+	@Override
+	public void onRequestPauseMainVideo(long callToken, boolean isPause,
+			boolean canResetByPeer) {
+	}
+
+	@Override
+	public void onData(long callToken, byte[] pcDataBuf) {
+		Log.i("pcDataBuf", "pcDataBuf : " + pcDataBuf.length);
+	}
+
+	@Override
+	public void onMainVideoReceiveStateChange(long callToken,
+			EngineSdkVideoChannelState state) {
+		if (state == EngineSdkVideoChannelState.ES_STATE_ON_VIDEO_CHANNEL_INACTIVE) {
+			// mTargetMainVideoOn = false;
+		} else {
+			// mTargetMainVideoOn = true;
+		}
+	}
+
+	@Override
+	public void onMainVideoTransmitStateChange(long callToken,
+			EngineSdkVideoChannelState state) {
+		if (state == EngineSdkVideoChannelState.ES_STATE_ON_VIDEO_CHANNEL_INACTIVE) {
+			// mSelfMainVideoOn = false;
+		} else {
+			// mSelfMainVideoOn = true;
+		}
+	}
+
+	@Override
+	public void onCameraOpenResult(boolean isSuccess) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		if (hasFocus) {
+			if (videoPagerShowFlag == 1) {
+				myCameraView.setVisibility(View.INVISIBLE);
+				mTv2.setVisibility(View.INVISIBLE);
+			} else if (videoPagerShowFlag == 5) {
+				myCameraView.setVisibility(View.INVISIBLE);
+			} else {
+				myCameraView.setVisibility(View.VISIBLE);
+			}
+			CameraManager.openCamera(this, myCameraView.getSurfaceTexture());
+		}
+		super.onWindowFocusChanged(hasFocus);
+	}
+
+	@Override
+	public void onSensorChanged(SensorEvent event) {
+		switch (event.sensor.getType()) {
+		case Sensor.TYPE_ACCELEROMETER:
+			onAccelerationChanged(event);
+			break;
+		case Sensor.TYPE_PROXIMITY:
+			// onProximityChanged(event);
+			break;
+		default:
+			Log.e("JPA", "Unknown Sensor Event! type=" + event.sensor.getType());
+		}
+	}
+
+	private void onAccelerationChanged(SensorEvent event) {
+		@SuppressWarnings("deprecation")
+		int newOrientation = Utility.getDirection(
+				(int) event.values[SensorManager.DATA_X],
+				(int) event.values[SensorManager.DATA_Y],
+				(int) event.values[SensorManager.DATA_Z]);
+		if (mPhoneOrientation != newOrientation) {
+			mPhoneOrientation = newOrientation;
+			Log.e("JPA", "Orientation Sensor Changed! value = "
+					+ mPhoneOrientation);
+		}
+	}
+
+	@Override
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		// do nothing
+	}
+
+	@Override
+	public void onMessageSentResult(int msgId, String msgGlobalId,
+			String msgSentTime, String remote_number, boolean isSuccess,
+			String msgContent, String im_mime_type, String reason,
+			EngineSdkMsgSender senderModule) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onMessage(int msgId, String msgGlobalId, String sentTime,
+			String sender, String msgContent, String mimeType,
+			EngineSdkMsgSender senderModule) {
+
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+	}
+
+	@Override
+	public void onInfo(String infoContent) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onMainVideoChannelWonderfulSaved(EngineSdkCallInformation arg0,
+			String filePath) {
+		// TODO Auto-generated method stub
+	}
+
+	public static void openVideo() {
+		// TODO Auto-generated method stub
+	}
+
+	private int sound = 100;
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		int action = event.getAction();
+		switch (action) {
+		case MotionEvent.ACTION_DOWN:
+			downY = event.getY();
+			break;
+		case MotionEvent.ACTION_UP:
+			float uoY = event.getY();
+			if ((uoY - downY) > 50) {
+				sound -= 10;
+				setSound(sound);
+				if (sound < 0) {
+					sound = 0;
+				}
+			} else if ((downY - uoY) > 50) {
+				sound += 5;
+				setSound(sound);
+			}
+			break;
+		}
+		return true;
+	}
+
+	private void setSound(int sound2) {
+		// TODO Auto-generated method stub
+		SoundUtils.setSoundData(getApplicationContext(), sound2);
+	}
+}

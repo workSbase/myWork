@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black" >
+
+    <FrameLayout
+        android:id="@+id/viewlet_remote_video_user"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/remote_user_bg"
+        android:onClick="onSwitchRemoteUsers" >
+    </FrameLayout>
+
+</RelativeLayout>

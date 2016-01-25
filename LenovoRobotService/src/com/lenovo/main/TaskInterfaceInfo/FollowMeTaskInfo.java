@@ -1,0 +1,36 @@
+package com.lenovo.main.TaskInterfaceInfo;
+
+import com.lenovo.main.MIService.BaseService;
+import com.lenovo.main.TaskInterface.FollowMeTaskInterface;
+//import android.os.ServiceManager;
+//import android.os.ILenovoDarwin;
+
+/**
+ * 开始跟人任务
+ * 
+ * @author Administrator
+ * 
+ */
+public class FollowMeTaskInfo implements FollowMeTaskInterface {
+
+	@Override
+	public int StartFollowMeTask() {
+		try {
+			//return BaseService.LeDarwinService.StartFollowMeTask();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return 0;
+	}
+
+	@Override
+	public int ExitFollowMeTask() {
+		try {
+			//return BaseService.LeDarwinService.ExitFollowMeTask();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return 0;
+	}
+
+}

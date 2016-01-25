@@ -1,0 +1,38 @@
+package com.lenovo.main.broadcastreceiver;
+
+//import com.lenovo.main.MIService.ServiceHelpClass;
+import com.lenovo.main.MIService.MyService;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
+
+/**
+ * yy 场景演示所有的广播接收
+ * 
+ * @author Administrator
+ * 
+ */
+public class SceneBroadCastReceiver extends BroadcastReceiver {
+	// private ServiceHelpClass serviceHelpClassInfo;
+	private Handler myServiceHandler;
+
+	@Override
+	public void onReceive(Context context, Intent intent) {
+
+		myServiceHandler = MyService.myServiceHandler;
+		startAccept(intent);
+	}
+
+	// 处理接收到的广播的消息
+	private void startAccept(Intent intent) {
+		//
+		String key = intent.getStringExtra("key");
+		if (key != null && !key.equals("")) {
+			int parseInt = Integer.parseInt(key);
+
+			// 发送到Myservice 中的handler 中进行处理
+			myServiceHandler.sendEmptyMessage(parseInt);
+		}
+	}
+}

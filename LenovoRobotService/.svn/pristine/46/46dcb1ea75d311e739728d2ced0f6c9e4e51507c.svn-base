@@ -1,0 +1,69 @@
+package com.lenovo.main.MIService;
+
+import android.os.Bundle;
+
+import android.os.Handler;
+import android.os.Message;
+import android.widget.Toast;
+
+import com.lenovo.mi.plato.comm.MoPacket;
+import com.lenovo.mi.plato.comm.TransportStatus;
+
+/**
+ * 现在该类中主要完成的就是,用户的登录,和绑定底层的 MIService
+ */
+public class MyService extends BaseService {
+
+	public int key;
+	public static Handler myServiceHandler;
+
+	@Override
+	public void initData() {
+		/**
+		 * 这个handler是给用户切换的时候使用的,还有就是YY演示的一些广播也是在这里面处理
+		 */
+		myServiceHandler = new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				int key = msg.what;
+				if (key == -1) {
+					Bundle bundle = msg.getData();
+					String name = bundle.getString("userName");
+					String passWold = bundle.getString("passWorld");
+					int userNumber = bundle.getInt("userFlag_numebr");
+					if (getBoolean(name, passWold, userNumber)) {
+						loginServer(userNumber, name, passWold);
+					}
+				} else {
+					// 把消息发送给 handler的帮助类来完成消息的处理
+					BaseService.handlerMassageUtils.setMassage(key);
+				}
+			}
+		};
+	}
+
+	private boolean getBoolean(String name, String passWold, int userNumber) {
+		if (name != null && !name.equals("") && passWold != null
+				&& !passWold.equals("")) {
+			return true;
+		}
+		return false;
+	}
+
+	public void loginServer(int i, String userName, String passWorld) {
+		if (myMt != null && myMt.getStatus() == TransportStatus.CONNECTED) {
+			MoPacket pack = new MoPacket();
+			pack.pushInt32(i);
+			pack.pushInt32(0);
+			pack.pushInt32(7);
+			pack.pushInt32(0);
+			myMt.sendPacket(pack);
+			pack = null;
+			// 登陆友约
+			userLoginHelpClassTools.setUserNameAndPassworld("18911518445",
+					"427096");
+		} else {
+			Toast.makeText(this, "心跳帧发送失败", Toast.LENGTH_SHORT).show();
+		}
+	}
+}

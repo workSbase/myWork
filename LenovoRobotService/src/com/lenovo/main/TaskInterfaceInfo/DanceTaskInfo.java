@@ -1,0 +1,104 @@
+package com.lenovo.main.TaskInterfaceInfo;
+
+import java.io.IOException;
+
+import android.content.Context;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
+import com.lenovo.lenovoRobotService.R;
+import com.lenovo.main.MIService.BaseService;
+import com.lenovo.main.TaskInterface.DanceTaskInterface;
+import android.os.SystemClock;
+//import android.os.ServiceManager;
+//import android.os.ILenovoDarwin;
+//import android.util.Slog;
+
+/**
+ * 跳舞任务
+ * 
+ * @author Administrator
+ * 
+ */
+public class DanceTaskInfo implements DanceTaskInterface, OnCompletionListener {
+
+	private Context context;
+	private MediaPlayer mMediaPlayer;
+
+	// private boolean isStart;
+
+	private Thread thread1 = null;
+
+	// private MGetRobotTaskIdThread getRobotTaskIdThread = null;
+
+	public DanceTaskInfo(Context context) {
+		this.context = context;
+
+		mMediaPlayer = MediaPlayer.create(context, R.raw.xiaopingguo);
+		mMediaPlayer.setOnCompletionListener(this);
+	}
+
+	@Override
+	public int StartDance() {
+		try {
+		//	BaseService.LeDarwinService.StartDance();
+			// 2,播放音乐
+			startMusic();
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		// startDanceThread();
+		return 0;
+	}
+
+	@Override
+	public int ExitDance() {
+		// 1,调用底层结束跳舞
+		try {
+			//BaseService.LeDarwinService.ExitDance();
+			// 2,关闭音乐
+			closeMusicThread();
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return 0;
+	}
+
+	@Override
+	public int getRobotTaskId() {
+		try {
+			//return BaseService.LeDarwinService.getRobotTask();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return 0;
+	}
+
+	// 音乐播放完成回调
+	@Override
+	public void onCompletion(MediaPlayer arg0) {
+		// TODO Auto-generated method stub
+		closeMusicThread();
+	}
+
+	private void startMusic() {
+		try {
+
+			mMediaPlayer.start();
+
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void closeMusicThread() {
+		// TODO Auto-generated method stub
+		if (mMediaPlayer != null) {
+			mMediaPlayer.release();
+			mMediaPlayer.stop();
+			mMediaPlayer = null;
+		}
+	}
+}

@@ -1,0 +1,116 @@
+package com.lenovo.main;
+
+import android.content.Context;
+import android.graphics.SurfaceTexture;
+import android.hardware.Camera;
+import android.hardware.Camera.Size;
+import android.os.Handler;
+import android.util.AttributeSet;
+import android.view.TextureView;
+import android.view.ViewGroup;
+
+public class CameraTextureView extends TextureView implements
+		TextureView.SurfaceTextureListener {
+	private Size mPreviewSize;
+	private float mPreviewAreaRatio;
+	private int mPreviewAreaWidth, mPreviewAreaHeight;
+	ViewGroup.LayoutParams mLayoutParams;
+	private Context mContext;
+
+	private Handler mMainHandler;
+	private Camera mCamera;
+
+	public CameraTextureView(Context context) {
+		super(context);
+		mMainHandler = new Handler(context.getMainLooper());
+		mContext = context;
+		setSurfaceTextureListener(this);
+	}
+
+	public CameraTextureView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+
+		// mPreviewAreaHeight = attrs.getAttributeResourceValue(null, "width",
+		// 300);
+		// mPreviewAreaWidth = attrs.getAttributeResourceValue(null, "height",
+		// 300);
+		// mPreviewAreaRatio = (float) mPreviewAreaHeight / mPreviewAreaWidth;
+
+		mMainHandler = new Handler(context.getMainLooper());
+		mContext = context;
+		setSurfaceTextureListener(this);
+	}
+
+	public void updatePreviewInfo(Camera camera) {
+		Size size = camera.getParameters().getPreviewSize();
+		float previewRatio = (float) size.width / size.height;
+		int width, height;
+		if (!size.equals(mPreviewSize)) {
+			if (mPreviewAreaRatio > previewRatio) {
+				width = mPreviewAreaWidth;
+				height = (int) (mPreviewAreaWidth * previewRatio);
+			} else {
+				width = (int) (mPreviewAreaHeight / previewRatio);
+				height = mPreviewAreaHeight;
+			}
+
+			updateSizeAndPosition(width, height);
+			mPreviewSize = size;
+		}
+
+	}
+
+	private void updateSizeAndPosition(int width, int height) {
+		mLayoutParams = this.getLayoutParams();
+		mLayoutParams.width = width;
+		mLayoutParams.height = height;
+		mMainHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				setLayoutParams(mLayoutParams);
+			}
+		});
+
+	}
+
+	public void setPreviewAreaSize(int width, int height) {
+		mPreviewAreaHeight = height;
+		mPreviewAreaWidth = width;
+		mPreviewAreaRatio = (float) mPreviewAreaHeight / mPreviewAreaWidth;
+	}
+
+	@Override
+	public void onSurfaceTextureAvailable(SurfaceTexture surface, int width,
+			int height) {
+		// CameraManager.setTargetTextureView(this);
+	}
+
+	@Override
+	public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width,
+			int height) {
+		// Ignored, Camera does all the work for us
+	}
+
+	@Override
+	public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+		// CameraManager.setTargetTextureView(null);
+		return true;
+	}
+
+	@Override
+	public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+		// Invoked every time there's a new Camera preview frame
+	}
+
+	public void setCamera(Camera camera) {
+		mCamera = camera;
+	}
+
+	public void setBigViewAreaSize(int w, int h/* , int x, int y */) {
+
+	}
+
+	public void setSmallRemoteViewAreaSize(int w, int h/* , int x, int y */) {
+
+	}
+}

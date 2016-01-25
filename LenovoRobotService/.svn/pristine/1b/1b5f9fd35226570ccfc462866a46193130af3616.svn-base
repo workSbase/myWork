@@ -1,0 +1,334 @@
+package com.lenovo.main;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.app.Application;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.AssetFileDescriptor;
+import android.database.ContentObserver;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
+import android.os.SystemClock;
+import android.util.Log;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.lenovo.lenovoRobotService.R;
+import com.lenovo.main.util.UserLoginHelpClassTools;
+import com.lenovo.vcs.weaver.enginesdk.EngineSdkCallState;
+import com.lenovo.vcs.weaver.enginesdk.a.api.WeaverService;
+import com.lenovo.vcs.weaver.enginesdk.a.interfaces.WeaverCallStateListener;
+import com.lenovo.vcs.weaver.enginesdk.a.interfaces.WeaverMessageListener;
+import com.lenovo.vcs.weaver.enginesdk.a.interfaces.WeaverUserSipStatusListener;
+import com.lenovo.vcs.weaver.enginesdk.b.data.DataListener;
+import com.lenovo.vcs.weaver.enginesdk.b.data.DataService;
+import com.lenovo.vcs.weaver.enginesdk.b.data.model.AbstractDataItem;
+import com.lenovo.vcs.weaver.enginesdk.b.data.model.ContactDataItem;
+import com.lenovo.vcs.weaver.enginesdk.b.logic.sip.aidl.model.CallInfo;
+import com.lenovo.vcs.weaver.enginesdk.b.logic.sip.utility.MediaManager;
+import com.lenovo.vcs.weaver.enginesdk.b.logic.user.UserConstants;
+import com.lenovo.vcs.weaver.enginesdk.common.UserPreferences;
+
+//import android.util.Slog;
+
+public class TesterApplication extends Application implements
+		WeaverUserSipStatusListener, WeaverCallStateListener,
+		WeaverMessageListener, DataListener {
+	private static final String TAG = "TesterApplication";
+	private boolean mIsAutoAnswer = false;
+	private AlertDialog mMessagePopupDialog = null;
+	private AlertDialog.Builder mDialogBuilder = null;
+
+	private Handler mHandler;
+
+	private FloatTool mFloatTool;
+	private ImageView mStatusView;
+
+	private int mAutoCallTotalTimes, mAutoCallCurrent, mAutoCallLastTimeInMS;
+	private String mAutoCallId;
+	private boolean mAutoCallIsAudioOnly;
+
+	private HandlerThread mLooper;
+	private Handler mLoopHandler;
+
+	// private int mCurrentUserStatus = UserConstants.UserStatus.OFFLINE;
+
+	// private boolean isStart;
+	private UserLoginHelpClassTools userLoginHelpClassTools;
+	public boolean isUserOnLin;
+	private int status;
+	private UserLoginHelpClassTools helpClassTools;
+
+	@Override
+	public void onCreate() {
+
+		helpClassTools = new UserLoginHelpClassTools(getApplicationContext());
+		// 检查 有约是否在线的线程
+		MyUserStart myUserStart = new MyUserStart();
+		myUserStart.start();
+
+		Log.e("JPA", "Application onCreate~");
+		mLooper = new HandlerThread("");
+		mLooper.start();
+
+		mLoopHandler = new Handler(mLooper.getLooper()) {
+			public void handleMessage(Message msg) {
+				System.out.println("---------------------------mHanlder----");
+			}
+		};
+
+		super.onCreate();
+
+		mHandler = new Handler(getMainLooper());
+		System.loadLibrary("opengl");
+		UserPreferences.init(this);
+
+		// if
+		// ("com.lenovo.vcs.weaver.enginesdk.call".equals(getCurProcessName(this)))
+		// {
+		CameraManager.init();
+		AssetFileDescriptor afd = getResources().openRawResourceFd(
+				R.raw.aesthete);
+		MediaManager.init(this, afd);
+		// } else {
+		WeaverService.getInstance().init(this);
+		WeaverService.getInstance().registerUserStatusListener(this);
+		WeaverService.getInstance().registerCallStateListener(this);
+		WeaverService.getInstance().registerMessageStateListener(this);
+
+		DataService.getInstance().registerDataObserver(ContactDataItem.class,
+				true, new DataListener(mLoopHandler));
+		init();
+
+		if (userLoginHelpClassTools == null) {
+
+		}
+		// 用户登陆的帮助类
+		userLoginHelpClassTools = new UserLoginHelpClassTools(
+				getApplicationContext());
+
+	}
+
+	public void setAutoAnswering(boolean isAutoAnswer) {
+		mIsAutoAnswer = isAutoAnswer;
+	}
+
+	public boolean isAutoAnswering() {
+		return mIsAutoAnswer;
+	}
+
+	public void init() {
+		Log.e("JPA",
+				"TesterApplication onCreate! ver="
+						+ Utility.getAppVersionName(this));
+
+		// 状态图标
+		mStatusView = new ImageView(getApplicationContext());
+
+		mFloatTool = new FloatTool(getApplicationContext());
+		mFloatTool.addView(mStatusView, 10, 10);
+
+		// 对话框
+		mDialogBuilder = new AlertDialog.Builder(getApplicationContext());
+		mDialogBuilder.setCancelable(true).setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.dismiss();
+					}
+				});
+		// printPhoneInfo();
+	}
+
+	@Override
+	public void onMessage(int msgId, String msgGlobalId, final String sender,
+			final String msgContent, String mimeType) {
+		// Application负责在收到message的时候弹出对话框
+		if ("text/html-fragment-1.0".equals(mimeType)) {
+			mHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					mDialogBuilder.setTitle("来自" + sender + "的消息：");
+					mDialogBuilder.setMessage(msgContent);
+					mMessagePopupDialog = mDialogBuilder.create();
+					mMessagePopupDialog.getWindow().setType(
+							WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+					mMessagePopupDialog.setCanceledOnTouchOutside(false);
+					mMessagePopupDialog.show();
+				}
+			});
+		}
+	}
+
+	@Override
+	public void onMessageSentResult(final int msgId, String msgGlobalId,
+			String msgSentTime, String remote_number, boolean isSuccess,
+			String msgContent, String mimeType, final String reason) {
+		// 如果消息发送失败需要通知用户
+		if (!isSuccess) {
+			mHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					mDialogBuilder.setTitle("发送消息失败了：");
+					mDialogBuilder.setMessage(String.valueOf(msgId) + ":"
+							+ reason);
+					mMessagePopupDialog = mDialogBuilder.create();
+					mMessagePopupDialog.getWindow().setType(
+							WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+					mMessagePopupDialog.setCanceledOnTouchOutside(false);
+					mMessagePopupDialog.show();
+				}
+			});
+		}
+	}
+
+	public String getCurProcessName(Context context) {
+		int pid = android.os.Process.myPid();
+		ActivityManager mActivityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+		for (ActivityManager.RunningAppProcessInfo appProcess : mActivityManager
+				.getRunningAppProcesses()) {
+			if (appProcess.pid == pid) {
+				return appProcess.processName;
+			}
+		}
+		return null;
+	}
+
+	public void startAutoCalling(String to, boolean isAudioOnly, int callTimes,
+			int singleCallTimeInS) {
+		mAutoCallTotalTimes = callTimes;
+		mAutoCallCurrent = 0;
+		mAutoCallId = to;
+		mAutoCallLastTimeInMS = (singleCallTimeInS > 5 ? singleCallTimeInS : 5) * 1000;
+		mAutoCallIsAudioOnly = isAudioOnly;
+		// nextCall();
+	}
+
+	public void toast(final String text) {
+		new Handler(getMainLooper()).post(new Runnable() {
+			@Override
+			public void run() {
+				Log.e("JPA", "toast:" + text);
+				Toast.makeText(getApplicationContext(), text,
+						Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+
+	// private void nextCall() {
+	// if (mAutoCallTotalTimes > mAutoCallCurrent) {
+	// mAutoCallCurrent++;
+	// toast("自动呼叫进行中，第" + mAutoCallCurrent + "/" + mAutoCallTotalTimes
+	// + "次");
+	// mHandler.postDelayed(new Runnable() {
+	// @Override
+	// public void run() {
+	// WeaverService.getInstance().dispatchRequest(
+	// WeaverAPI.sipMakeCall(mAutoCallId,
+	// mAutoCallIsAudioOnly, null));
+	// mHandler.postDelayed(new Runnable() {
+	// @Override
+	// public void run() {
+	// // 随便填一个id即可，SDK会处理
+	// WeaverService.getInstance().dispatchRequest(
+	// WeaverAPI.sipEndCall(-1, null));
+	// }
+	// }, mAutoCallLastTimeInMS);
+	// }
+	// }, 2000);
+	// }
+	// }
+
+	@Override
+	public void onStatusChange(final int status) {
+		this.status = status;
+		if (status == 1) {
+
+			Toast.makeText(getApplicationContext(), "当前用户登录成功" + status,
+					Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(getApplicationContext(), "当前用户登录失败" + status,
+					Toast.LENGTH_SHORT).show();
+		}
+
+		// 根据用户状态绘制图标
+		if (status == UserConstants.UserStatus.ONLINE) {
+			// 表示 该用户现在是在线状态
+			mHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					mStatusView.setImageResource(R.drawable.link_offline_);
+				}
+			});
+		} else {
+			// 表示用户现在是 不在线的状态
+			mHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					mStatusView.setImageResource(R.drawable.link_offline);
+				}
+			});
+		}
+	}
+
+	@Override
+	public void onCallStateChange(CallInfo call, int state) {
+		if (state == EngineSdkCallState.ES_STATE_ON_CALL_CALL_ENDED.swigValue()) {
+			// nextCall();
+		}
+	}
+
+	@Override
+	public void onDataChange(int dataType, int actionType,
+			List<? extends AbstractDataItem> data) {
+	}
+
+	@Override
+	public void onDataChange(int dataType, int actionType, AbstractDataItem data) {
+		// TODO Auto-generated method stub
+
+	}
+
+	class DataListener extends ContentObserver {
+
+		public DataListener(Handler handler) {
+			super(handler);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public void onChange(boolean selfChange) {
+			try {
+				Uri r = DataService.getInstance().getUri(ContactDataItem.class);
+				List<ContactDataItem> s = DataService.getInstance()
+						.getDao(ContactDataItem.class).queryForAll();
+
+				Log.i("JPA",
+						"-------------------------the sms table has changed:"
+								+ s.size());
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	class MyUserStart extends Thread {
+		@Override
+		public void run() {
+			while (isUserOnLin) {
+				SystemClock.sleep(4000);
+				if (status == 0) {
+					TesterApplication.this.helpClassTools
+							.setUserNameAndPassworld("18911518445", "427096");
+				}
+			}
+		}
+	}
+}
