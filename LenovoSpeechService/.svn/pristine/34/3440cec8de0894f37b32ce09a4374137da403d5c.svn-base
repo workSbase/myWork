@@ -1,0 +1,59 @@
+#BNF+IAT 1.0 UTF-8;
+!grammar lenovorobotservice;
+!slot <contact>;
+!slot <callPre>;
+!slot <callPhone>;
+!slot <callTo>;
+!slot <go>;
+!slot <position>;
+!slot <move>;
+!slot <measurement>;
+!slot <what>;
+!slot <open>;
+!slot <homeappliances>;
+!slot <close>;
+!slot <homeappliance>;
+!slot <player>;
+!slot <video>;
+
+!start <callStart>;
+
+<callStart>:
+[<callPre>][<callTo>]<contact><callPhone>
+|[<callPre>]<callPhone>[<callTo>]<contact>
+|[<callPre>]<callPhone>
+
+|<move>
+
+|<measurement><what>
+|<what><measurement>
+
+|<open><homeappliances>
+|<close><homeappliance>
+|<player><video>
+
+|<go><position>;
+
+
+<contact>:庆威|小孔|孔庆威;
+<callPre>:我要|我想|我想要;
+<callPhone>:打电话;
+<callTo>:给;
+
+<move>:前进|后退|左转|右转;
+
+<go>:去|到;
+<position>:厨房|卧室|阳台|客厅;
+
+<measurement>:测量|检测|识别;
+<what>:身高|心率|人脸;
+
+<open>:打开;
+<homeappliances>:投影|电灯|冰箱;
+
+<close>:关闭;
+<homeappliance>:投影|电灯|冰箱;
+
+<player>:播放;
+<video>:视频|电视;
+

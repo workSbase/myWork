@@ -1,0 +1,244 @@
+{
+    "closeApplication": [],
+    "name": "HomePager",
+    "openApplication": [],
+    "packageName": "cn.com.lenovo.homepager",
+    "state": [
+        {
+            "activityName": "cn.com.lenovo.homepager.MainActivity",
+            "keyWord": [
+                {
+                    "patternKey": "A",
+                    "patternValue": [
+                        {
+                            "key": "打电话",
+                            "value": "1001"
+                        }
+                    ]
+                },
+                {
+                    "patternKey": "B",
+                    "patternValue": [
+                        {
+                            "key": "给",
+                            "value": "1002"
+                        }
+                    ]
+                },
+                {
+                    "patternKey": "C",
+                    "patternValue": [
+                        {
+                            "key": "小峰",
+                            "value": "1003"
+                        },
+                        {
+                            "key": "小王",
+                            "value": "1005"
+                        }
+                    ]
+                },
+                {
+                    "patternKey": "D",
+                    "patternValue": [
+                        {
+                            "key": "前进",
+                            "value": "MOVE&0"
+                        },
+                        {
+                            "key": "后退",
+                            "value": "MOVE&1"
+                        },
+                        {
+                            "key": "左转",
+                            "value": "MOVE&2"
+                        },
+                        {
+                            "key": "右转",
+                            "value": "MOVE&3"
+                        },
+                        {
+                            "key": "停止",
+                            "value": "MOVE&4"
+                        },
+                        {
+                            "key": "跟我走",
+                            "value": "MOVE&5"
+                        },
+                        {
+                            "key": "跟着我",
+                            "value": "MOVE&5"
+                        },
+                        {
+                            "key": "别跟了",
+                            "value": "MOVE&6"
+                        }
+                    ]
+                },
+                {
+                    "patternKey": "E",
+                    "patternValue": [
+                        {
+                            "key": "到",
+                            "value": "GO"
+                        },
+                        {
+                            "key": "去",
+                            "value": "GO"
+                        }
+                    ]
+                },
+                {
+                    "patternKey": "F",
+                    "patternValue": [
+                        {
+                            "key": "卧室",
+                            "value": "4.0,0.0,0.0"
+                        },
+                        {
+                            "key": "厨房",
+                            "value": "-2.6,0.04,0.0"
+                        },
+                        {
+                            "key": "客厅",
+                            "value": "0.0,1.0,0.0"
+                        }
+                    ]
+                },
+                {
+                    "patternKey": "Darwin",
+                    "patternValue": [
+                        {
+                            "key": "达尔文",
+                            "value": "Darwin"
+                        }
+                    ]
+                },
+                {
+                    "patternKey": "G",
+                    "patternValue": [
+                        {
+                            "key": "搜索",
+                            "value": "SEARCH"
+                        }
+                    ]
+                },
+                {
+                    "patternKey": "H",
+                    "patternValue": [
+                        {
+                            "key": "宫爆鸡丁",
+                            "value": ""
+                        },
+                        {
+                            "key": "宫保鸡丁",
+                            "value": ""
+                        },
+                        {
+                            "key": "鱼香肉丝",
+                            "value": ""
+                        },
+                        {
+                            "key": "糖醋排骨",
+                            "value": ""
+                        },
+                        {
+                            "key": "地三鲜",
+                            "value": ""
+                        },
+                        {
+                            "key": "麻辣豆腐",
+                            "value": ""
+                        },
+                        {
+                            "key": "锅包肉",
+                            "value": ""
+                        },
+                        {
+                            "key": "回锅肉",
+                            "value": ""
+                        },
+                        {
+                            "key": "西红柿炒鸡蛋",
+                            "value": ""
+                        },
+                        {
+                            "key": "蛋炒饭",
+                            "value": ""
+                        },
+                        {
+                            "key": "红烧肉",
+                            "value": ""
+                        }
+                    ]
+                },
+                {
+                    "patternKey": "I",
+                    "patternValue": [
+                        {
+                            "key": "打开",
+                            "value": "OPEN"
+                        },
+                        {
+                            "key": "开",
+                            "value": "OPEN"
+                        },
+                        {
+                            "key": "关闭",
+                            "value": "CLOSE"
+                        },
+                        {
+                            "key": "关",
+                            "value": "CLOSE"
+                        }
+                    ]
+                },
+                {
+                    "patternKey": "J",
+                    "patternValue": [
+                        {
+                            "key": "灯",
+                            "value": "0"
+                        },
+                        {
+                            "key": "电灯",
+                            "value": "0"
+                        },
+                        {
+                            "key": "电视",
+                            "value": "1"
+                        },
+                        {
+                            "key": "空调",
+                            "value": "2"
+                        },
+                        {
+                            "key": "冰箱",
+                            "value": "3"
+                        }
+                    ]
+                },
+                {
+                    "patternKey": "K",
+                    "patternValue": [
+                        {
+                            "key": "识别人脸",
+                            "value": "5"
+                        }
+                    ]
+                }
+            ],
+            "pattern": [
+                "Darwin&A&B&C",
+                "Darwin&B&C&A",
+                "Darwin&C&A&B&C",
+                "Darwin&D",
+                "Darwin&E&F",
+                "Darwin&G&H",
+                "Darwin&I&J",
+                "Darwin&K"
+            ]
+        }
+    ],
+    "type": "Application"
+}

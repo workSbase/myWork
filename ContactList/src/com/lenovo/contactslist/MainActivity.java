@@ -1,0 +1,99 @@
+package com.lenovo.contactslist;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import com.google.gson.Gson;
+import com.lenovo.contactslist.bin.FriendBin;
+import com.lenovo.contactslist.utils.SharedPreferencesHelpClass;
+import com.lenovo.contactslist.utils.StringUtils;
+
+public class MainActivity extends Activity {
+
+	private SharedPreferencesHelpClass sharedPreferencesHelpClassInfor;
+	private int userFlag;
+	private FriendBin fromJson;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		initData();
+
+		setContentView(R.layout.activity_main);
+
+		// 初始化字体对象
+		Typeface typeface = Typeface.createFromAsset(getAssets(),
+				"fonts/lenovo_font.ttf");
+
+		TextView tv_title = (TextView) findViewById(R.id.tv_title);
+		// 为控件设置字体
+		tv_title.setTypeface(typeface);
+
+		TextView contacts1 = (TextView) findViewById(R.id.contacts1);
+		contacts1.setTypeface(typeface);
+		TextView contacts2 = (TextView) findViewById(R.id.contacts2);
+		contacts2.setTypeface(typeface);
+		TextView contacts3 = (TextView) findViewById(R.id.contacts3);
+		contacts3.setTypeface(typeface);
+		TextView contacts4 = (TextView) findViewById(R.id.contacts4);
+		contacts4.setTypeface(typeface);
+		// ImageView userChange = (ImageView) findViewById(R.id.userChange);
+
+		Button contacts_Bt = (Button) findViewById(R.id.contacts_Bt);
+		contacts1.setText(fromJson.name);
+		if (userFlag == 0) {
+			// userChange.setBackgroundResource(R.drawable.cn_normal);
+			contacts_Bt.setBackgroundResource(R.drawable.selecter_contacts_cn);
+			tv_title.setText("联系人");
+		}
+
+	}
+
+	private void initData() {
+		Gson gson = new Gson();
+
+		// 判断联系人是那种类型的
+		sharedPreferencesHelpClassInfor = SharedPreferencesHelpClass
+				.getSharedPreferencesHelpClassInfor();
+		userFlag = sharedPreferencesHelpClassInfor.getUserFlag(this);
+		InputStream open = null;
+		try {
+			if (userFlag == 0) {
+				open = this.getAssets().open("contactslist");
+			} else {
+				open = this.getAssets().open("contactslist_en");
+			}
+			String textFromStream = StringUtils.getTextFromStream(open);
+			fromJson = gson.fromJson(textFromStream, FriendBin.class);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void click(View view) {
+		sendBroadcastToStopSpeech();
+		// 发送拨打电话的广播
+		Intent intent = new Intent();
+		intent.setAction("call.phone");
+		sendBroadcast(intent);
+	}
+
+	/*
+	 * 发送停止录音的广播
+	 */
+	public void sendBroadcastToStopSpeech() {
+		Intent startSpeech_intent = new Intent();
+		startSpeech_intent.setAction("cn.com.lenovo.speechservice");
+		startSpeech_intent.putExtra("StopSpeech", true);
+		sendBroadcast(startSpeech_intent);
+	}
+}
