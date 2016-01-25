@@ -1,6 +1,5 @@
 package com.lenovo.lenovorobot_new.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,7 +10,7 @@ import android.os.Message;
  * @author Administrator
  * 
  */
-public class FindingPeopleActivity extends Activity {
+public class FindingPeopleActivity extends BaseEngineHandlerActivity {
 	// 找人任务中,如果是找到人把当前的界面给结束掉
 	public static Handler handler;
 

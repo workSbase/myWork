@@ -116,8 +116,8 @@ public class AcceptOpenServerPackageUtils {
 			case 25:
 				// 手机通知机器人通话类型和被呼叫人 0/1/2，0/1/2
 				// 判断当前的呼叫类型是视频通话还是视频监控
-				int int32 = pack.getInt32();
-				switch (int32) {
+				int videoType = pack.getInt32();
+				switch (videoType) {
 				case 0:
 					// 表示视频监控
 					break;
@@ -128,7 +128,7 @@ public class AcceptOpenServerPackageUtils {
 					msg.what = 1;
 					msg.obj = peopleId;
 					MIService.MIMESSAGEHANDLER.sendMessage(msg);
-					
+
 					break;
 				case 2:
 

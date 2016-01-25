@@ -5,8 +5,7 @@ import android.os.Handler;
 import android.os.ILenovoDarwin;
 import android.os.Message;
 
-import com.lenovo.lenovorobot_new.miinterface.AnwerPhoneInterface;
-import com.lenovo.lenovorobot_new.miinterfaceinfo.AnwerPhoneInterfaceInfo;
+import com.lenovo.lenovorobot_new.miinterfaceinfo.MIClass;
 
 /**
  * 用来和底层交互的 handler,所有和底层相关的调用全部放在该类中完成
@@ -16,12 +15,11 @@ import com.lenovo.lenovorobot_new.miinterfaceinfo.AnwerPhoneInterfaceInfo;
  */
 public class MIMessageHandler extends Handler {
 
-	private AnwerPhoneInterface anwerPhoneInterface;
+	private MIClass miClass;
 
 	public MIMessageHandler(Context context, ILenovoDarwin LeDarwinService) {
-		// ①获取到底层服务的对象
-		anwerPhoneInterface = new AnwerPhoneInterfaceInfo(context,
-				LeDarwinService);
+		miClass = new MIClass(LeDarwinService);
+
 	}
 
 	// ②通过handler的标示进行调用
@@ -32,10 +30,10 @@ public class MIMessageHandler extends Handler {
 		switch (key) {
 		case 1:
 			// 开启找人
-			anwerPhoneInterface.startFindingPersonTask(peopleId);
+			// anwerPhoneInterface.startFindingPersonTask(peopleId);
 			break;
 		case 2:
-			anwerPhoneInterface.exitFindingPersonTask();
+			// anwerPhoneInterface.exitFindingPersonTask();
 			break;
 		case 3:
 			// 遥控

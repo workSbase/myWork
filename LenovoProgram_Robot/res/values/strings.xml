@@ -4,5 +4,27 @@
     <string name="app_name">Robot</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">欢迎使用智能机器人语音服务,我是机器人达尔文,很高兴为您服务</string>
+    <string name="sliding_value_cif">CIF</string>
+    <string name="sliding_value_480">480p</string>
+    <string name="sliding_value_720">720p</string>
+    <string name="sliding_value_1080">1080p</string>
+    <string name="sliding_value_150k">150kbps</string>
+    <string name="sliding_value_500k">500kbps</string>
+    <string name="sliding_value_800k">800kbps</string>
+    <string name="sliding_value_1m">1Mbps</string>
+    <string name="sliding_value_2m">2Mbps</string>
+    <string name="sliding_value_5m">5Mbps</string>
+    <string name="sliding_value_10m">10Mbps</string>
+    <string name="sliding_value_15">15fps</string>
+    <string name="sliding_value_20">20fps</string>
+    <string name="sliding_value_24">24fps</string>
+    <string name="sliding_value_30">30fps</string>
+    <string name="sliding_value_60">60fps</string>
+    <string name="sliding_value_0">静音</string>
+    <string name="sliding_value_50">50</string>
+    <string name="sliding_value_100">100</string>
+    <string name="sliding_value_150">150</string>
+    <string name="sliding_value_200">200</string>
+    <string name="sliding_value_255">255</string>
 
 </resources>

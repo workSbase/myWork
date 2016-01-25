@@ -1,8 +1,6 @@
 package com.lenovo.lenovorobot_new.activity;
 
 import java.util.ArrayList;
-
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.widget.RadioGroup;
@@ -22,7 +20,8 @@ import com.lenovo.lenovorobot_new.childView.ShowFuncationView;
  * @author Administrator
  * 
  */
-public class SplashActivity extends Activity implements OnCheckedChangeListener {
+public class SplashActivity extends BaseEngineHandlerActivity implements
+		OnCheckedChangeListener {
 
 	private ViewPager viewPager;
 	private RadioGroup radioGroup;

@@ -9,7 +9,8 @@ import com.lenovo.lenovorobot_new.BaseClass.BaseService;
 import com.lenovo.lenovorobot_new.utils.Log_Toast;
 
 /**
- * 和底层交互的服务,只要是和底层相关的操作都要从这个service中经过
+ * 和底层交互的服务,只要是和底层相关的操作都要从这个service中的Handler中经过,当前的服务只是获取底层的服务,
+ * 然后把这个服务对象下发到handler中供使用
  * 
  * @author Administrator
  * 
