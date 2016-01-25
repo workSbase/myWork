@@ -1,0 +1,87 @@
+{
+    "closeApplication": [
+        "达尔文再见"
+    ],
+    "name": "达尔文",
+    "openApplication": [
+        "达尔文陪我聊天"
+    ],
+    "packageName": "cn.com.lenovo.darwin",
+    "state": [
+        {
+            "activityName": "cn.com.lenovo.darwin.DarwinActivity",
+            "keyWord": [
+                {
+                    "patternKey": "A",
+                    "patternValue": [
+                        {
+                            "key": "打开投影",
+                            "value": "3001"
+                        },
+                        {
+                            "key": "关闭投影",
+                            "value": "3002"
+                        },
+                        {
+                            "key": "开启",
+                            "value": "1001"
+                        },
+                        {
+                            "key": "关闭",
+                            "value": "1002"
+                        },
+                        {
+                            "key": "返回",
+                            "value": "1003"
+                        },
+                        {
+                            "key": "阅读",
+                            "value": "2001"
+                        },
+                        {
+                            "key": "播报",
+                            "value": "2001"
+                        },
+                        {
+                            "key": "上一页",
+                            "value": "2002"
+                        },
+                        {
+                            "key": "下一页",
+                            "value": "2003"
+                        }
+                    ]
+                }
+            ],
+            "pattern": [
+                "A"
+            ]
+        },
+        {
+            "activityName": "cn.com.lenovo.darwin.WebActivity",
+            "keyWord": [
+                {
+                    "patternKey": "A",
+                    "patternValue": [
+                        {
+                            "key": "返回",
+                            "value": "1001"
+                        },
+                        {
+                            "key": "上一条",
+                            "value": "2001"
+                        },
+                        {
+                            "key": "下一条",
+                            "value": "2002"
+                        }
+                    ]
+                }
+            ],
+            "pattern": [
+                "A"
+            ]
+        }
+    ],
+    "type": "Application"
+}

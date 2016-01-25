@@ -1,0 +1,123 @@
+{
+    "closeApplication": [],
+    "name": "TouchWiz 主页",
+    "openApplication": [],
+    "packageName": "com.sec.android.app.launcher",
+    "state": [
+        {
+            "activityName": "com.android.launcher2.Launcher",
+            "keyWord": [
+                {
+                    "patternKey": "A",
+                    "patternValue": [
+                        {
+                            "key": "打电话",
+                            "value": "1001"
+                        }
+                    ]
+                },
+                {
+                    "patternKey": "B",
+                    "patternValue": [
+                        {
+                            "key": "给",
+                            "value": "1002"
+                        }
+                    ]
+                },
+                {
+                    "patternKey": "C",
+                    "patternValue": [
+                        {
+                            "key": "庆威",
+                            "value": "1003"
+                        },
+                        {
+                            "key": "雪成",
+                            "value": "1004"
+                        },
+                        {
+                            "key": "小王",
+                            "value": "1005"
+                        }
+                    ]
+                },
+                {
+                    "patternKey": "D",
+                    "patternValue": [
+                        {
+                            "key": "前进",
+                            "value": "MOVE&0"
+                        },
+                        {
+                            "key": "后退",
+                            "value": "MOVE&1"
+                        },
+                        {
+                            "key": "左转",
+                            "value": "MOVE&2"
+                        },
+                        {
+                            "key": "右转",
+                            "value": "MOVE&3"
+                        },
+                        {
+                            "key": "停止",
+                            "value": "MOVE&4"
+                        },
+                        {
+                            "key": "跟我走",
+                            "value": "MOVE&5"
+                        },
+                        {
+                            "key": "跟着我",
+                            "value": "MOVE&5"
+                        },
+                        {
+                            "key": "别跟了",
+                            "value": "MOVE&6"
+                        }
+                    ]
+                },
+                {
+                    "patternKey": "E",
+                    "patternValue": [
+                        {
+                            "key": "到",
+                            "value": "GO"
+                        },
+                        {
+                            "key": "去",
+                            "value": "GO"
+                        }
+                    ]
+                },
+                {
+                    "patternKey": "F",
+                    "patternValue": [
+                        {
+                            "key": "卧室",
+                            "value": "50,50"
+                        },
+                        {
+                            "key": "厨房",
+                            "value": "100,100"
+                        },
+                        {
+                            "key": "客厅",
+                            "value": "75,75"
+                        }
+                    ]
+                }
+            ],
+            "pattern": [
+                "A&B&C",
+                "B&C&A",
+                "C&A&B&C",
+                "D",
+                "E&F"
+            ]
+        }
+    ],
+    "type": "Application"
+}
