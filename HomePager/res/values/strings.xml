@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">HomePager</string>
+    <string name="action_settings">Settings</string>
+    <string name="video_call">Video Call</string>
+    <string name="chats">Chats</string>
+    <string name="video_player">Video Player</string>
+    <string name="health_kit">Health kit</string>
+
+</resources>
