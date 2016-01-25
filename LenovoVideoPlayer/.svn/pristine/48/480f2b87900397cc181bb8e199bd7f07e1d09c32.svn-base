@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- pressed 按下 -->
+    <item android:drawable="@drawable/ic_media_pressed" android:state_pressed="true"/>
+    <!-- focused 获取焦点 -->
+    <item android:drawable="@drawable/ic_media_pressed" android:state_focused="true"/>
+    <!-- default  正常 -->
+    <item android:drawable="@drawable/ic_media_next"/>
+
+</selector>
